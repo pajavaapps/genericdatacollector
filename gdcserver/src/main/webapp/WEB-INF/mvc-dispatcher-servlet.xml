@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+    http://www.springframework.org/schema/tx 
+    http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<mvc:annotation-driven />
+	
+	<context:property-placeholder location="/WEB-INF/classes/legaltrackerserver.properties"/>
+	
+	<context:component-scan base-package="com.javaapps" />
+	<bean
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+
+	<!-- one of the properties available; the maximum file size in bytes -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="10000000" />
+	</bean>
+
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+		<property name="url" value="${jdbc.connection}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.DerbyDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.connection.autocommit">true</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</prop>
+				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+			</props>
+		</property>
+		<property name="packagesToScan" value="com.javaapps.legaltracker.entities" />
+	</bean>
+
+	<bean id="mongoDBFactory" class="com.javaapps.legaltracker.utils.MongoDBFactory">
+		<constructor-arg index="0" value="${mongo.host}" />
+		<constructor-arg index="1" value="${mongo.port}" />
+		<constructor-arg index="2" value="${mongo.db}" />
+		<constructor-arg index="3" value="${mongo.username}" />
+		<constructor-arg index="4" value="${mongo.password}" />
+	</bean>
+
+	<bean id="mongoDb" factory-bean="mongoDBFactory" factory-method="createMongoDB"/>
+
+	
+	
+	<!-- <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager" 
+		p:sessionFactory-ref="sessionFactory"> <property name="nestedTransactionAllowed" 
+		value="true"/> </bean> -->
+
+</beans>   

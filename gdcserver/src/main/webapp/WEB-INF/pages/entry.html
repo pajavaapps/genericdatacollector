@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	function refreshPeopleList() {
+		$
+				.getJSON("list")
+				.done(
+						function(data) {
+							$("#peopleList").empty()
+							$
+									.each(
+											data,
+											function(i, person) {
+												$("#peopleList")
+														.append(
+																'<li id="'+person.id+'">'
+																		+ (i + 1)
+																		+ ' '
+																		+ person.id
+																		+ ' '
+																		+ person.firstName
+																		+ ' '
+																		+ person.lastName
+																		+ ' '
+																		+ person.address
+																		+ ' '
+																		+ person.city
+																		+ ' '
+																		+ person.state
+																		+ ' '
+																		+ person.country
+																		+ ' '
+																		+ person.zipCode
+																		+ ' '
+																		+ '<a href="javascript:void(0)" onClick="deleteItem('
+																		+ person.id
+																		+ ')">Delete</a>&nbsp;&nbsp;&nbsp; '
+																		+ '<a  href="javascript:void(0)" onClick="editItem('
+																		+ person.id
+																		+ ')">Edit</a></li>')
+											});
+						})
+	}
+
+	function editItem(id) {
+		$.getJSON("get/" + id).done(function(people) {
+			$("#peopleId").val(people.id);
+			$("#firstName").val(people.firstName);
+			$("#lastName").val(people.lastName);
+			$("#address").val(people.address);
+			$("#city").val(people.city);
+			$("#state").val(people.state);
+			$("#country").val(people.country);
+			$("#zipCode").val(people.zipCode);
+
+		})
+	}
+
+	function deleteItem(id) {
+		$.ajax({
+			url : 'delete/' + id,
+			type : 'DELETE',
+			dataType : 'json',
+			data : '',
+			success : function(response) {
+				alert("delete done");
+			}
+		});
+		refreshPeopleList();
+	}
+	
+
+	function saveForm() {
+		var obj = {
+			"id" : $("#peopleId").val(),
+			"firstName" : $("#firstName").val(),
+			"lastName" : $("#lastName").val(),
+			"address" : $("#address").val(),
+			"city" : $("#city").val(),
+			"state" : $("#state").val(),
+			"country" : $("#country").val(),
+			"zipCode" : $("#zipCode").val(),
+		};
+
+		$.ajax({
+			url : "save",
+			data : JSON.stringify(obj),
+			type : "PUT",
+			contentType : "application/json"
+		}).complete(function() {
+			refreshPeopleList();
+			$('#peopleForm')[0].reset()
+			$('#peopleId').val("")
+		});
+	}
+</script>
+<title>People Test Page</title>
+</head>
+<body>
+	<H1>Directory</H1>
+	<a href="../j_spring_security_logout"> Logout</a>
+	<form id="peopleForm" name=people action="people/save">
+	    <input id="peopleId" type="hidden" name="id" />
+		First Name: <input id="firstName" type="text" name="firstName" /> <br /> 
+		Last Name: <input  id="lastName" type="text" name="lastName" /><br /> 
+		Address: <input  id="address" type="text"name="address" /> <br /> 
+		City: <input  id="city" type="text" name="city" /><br />
+		State: <input  id="state" type="text" name="state" /><br /> 
+		Country: <input  id="country" type="text" name="country" /><br /> 
+		Zip Code: <input  id="zipCode"  type="text" name="zipCode" /><br /> 
+		<input type="button" onClick='saveForm()' value="Save" />
+	</form>
+
+
+
+
+	<ul id="peopleList">
+	</ul>
+
+<script type="text/javascript">	
+$(document).ready(function(){
+	refreshPeopleList();
+});
+</script>
+
+</body>
+<head>
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+</head>
+</html>
