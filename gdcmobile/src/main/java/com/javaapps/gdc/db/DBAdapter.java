@@ -52,22 +52,56 @@ public class DBAdapter {
 		this.context = context;
 	};
 
-	public long insertSensorMetaData(SensorMetaData sensorMetaData) {
+	private ContentValues getContentValues(SensorMetaData sensorMetaData){
 		ContentValues contentValues = new ContentValues();
 		contentValues.put("ID", sensorMetaData.getId());
 		contentValues.put("DATA_TYPE", sensorMetaData.getDataType().toString());
 		contentValues.put("DATA_SUBTYPE", sensorMetaData.getDataSubType());
+		if (sensorMetaData.getSamplingPeriod() > 0)
+		{
 		contentValues
 				.put("SAMPLING_PERIOD", sensorMetaData.getSamplingPeriod());
+		}else{
+			contentValues
+			.put("SAMPLING_PERIOD", SensorMetaData.DEFAULT_SAMPLING_PERIOD);
+		}
 		contentValues.put("DESCRIPTION", sensorMetaData.getDescription());
+		if (sensorMetaData.getAggregationMethod() != null)
+		{
 		contentValues.put("AGGREGATION_METHOD",
 				sensorMetaData.getAggregationMethod());
+		}else{
+			contentValues.put("AGGREGATION_METHOD",
+					SensorMetaData.DEFAULT_AGGREGATION_METHOD);
+		}
+		if (sensorMetaData.getAggregationPeriod() > 0)
+		{
 		contentValues.put("AGGREGATION_PERIOD",
 				sensorMetaData.getAggregationPeriod());
+		}else{
+			contentValues.put("AGGREGATION_PERIOD",
+					SensorMetaData.DEFAULT_AGGREGATION_PERIOD);
+		}
 		contentValues.put("ACTIVE", sensorMetaData.getActive());
+		if (sensorMetaData.getSamplingPeriod() != 0.0)
+		{
 		contentValues.put("CONVERSION_FACTOR",
 				sensorMetaData.getConversionFactor());
+		}else{
+			contentValues.put("CONVERSION_FACTOR",
+					SensorMetaData.DEFAULT_CONVERSION_FACTOR);
+		}
+		return(contentValues);
+	}
+	
+	public long insertSensorMetaData(SensorMetaData sensorMetaData) {
+		ContentValues contentValues= getContentValues( sensorMetaData);
 		return (genericDB.insertOrThrow(SENSOR_TABLE, null, contentValues));
+	}
+
+	public long updateSensorMetaData(SensorMetaData sensorMetaData) {
+		ContentValues contentValues= getContentValues( sensorMetaData);
+		return (genericDB.update(SENSOR_TABLE,  contentValues,"ID=?", new String[] { sensorMetaData.getId() }));
 	}
 
 	public SensorMetaData getSensorMetaData(String id) {
@@ -80,6 +114,10 @@ public class DBAdapter {
 		return sensorMetaData;
 	}
 
+	public void delete(SensorMetaData sensorMetaData) {
+		 genericDB.delete(this.SENSOR_TABLE,"ID=?", new String[] { sensorMetaData.getId()});
+	}
+	
 	public List<SensorMetaData> getActiveSensorMetaData() {
 		List<SensorMetaData> sensorMetaDataList = new ArrayList<SensorMetaData>();
 		Cursor cursor = genericDB.query(SENSOR_TABLE, SENSOR_COLUMNS,

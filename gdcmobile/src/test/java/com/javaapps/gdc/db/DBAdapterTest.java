@@ -88,7 +88,25 @@ public class DBAdapterTest extends AndroidTestCase {
 		assertEquals("Y", sensorMetaData.getActive());
 		assertTrue(dbAdapter.getAllSensorMetaData().size() > 0);
 		assertTrue(dbAdapter.getActiveSensorMetaData().size() > 0);
+		
+		sensorMetaData.setActive("N");
+		dbAdapter.updateSensorMetaData(sensorMetaData);
+		sensorMetaData = dbAdapter.getSensorMetaData("id");
+		assertEquals("N", sensorMetaData.getActive());
 
+		
+		SensorMetaData sensorMetaData1 = new SensorMetaData("id2",
+				DataType.GPS, "Y");
+		assertTrue(dbAdapter.insertSensorMetaData(sensorMetaData1) != -1);
+		sensorMetaData1= dbAdapter.getSensorMetaData("id2");
+		System.out.println(sensorMetaData1);
+		assertEquals(500, sensorMetaData1.getSamplingPeriod());
+		assertEquals(1.0, sensorMetaData1.getConversionFactor());
+		assertEquals(1000, sensorMetaData1.getAggregationPeriod());
+		assertEquals("MAX", sensorMetaData1.getAggregationMethod());
+		 dbAdapter.delete(sensorMetaData1);
+		 assertNull( dbAdapter.getSensorMetaData("id2"));
+		
 		DeviceMetaData deviceMetaData = new DeviceMetaData("company",
 				"deviceId", "customIdentifier");
 		System.out.println(deviceMetaData);
@@ -108,6 +126,7 @@ public class DBAdapterTest extends AndroidTestCase {
 		assertNotNull(deviceMetaData);
 		assertEquals("company1", deviceMetaData.getCompany());
 		assertEquals("deviceId1", deviceMetaData.getDeviceId());
+		
 		assertEquals("customIdentifier1", deviceMetaData.getCustomIdentifier());
 	}
 

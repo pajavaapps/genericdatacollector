@@ -1,8 +1,10 @@
 package com.javaapps.gdc.pojos;
 
+import java.io.Serializable;
+
 import com.javaapps.gdc.types.DataType;
 
-public class SensorMetaData {	
+public class SensorMetaData implements Serializable {	
 	private String id;
 	private DataType dataType;
 	private String dataSubType;
@@ -12,6 +14,13 @@ public class SensorMetaData {
 	private int aggregationPeriod;
 	private String active;
 	private double conversionFactor;
+	
+	public final static int DEFAULT_SAMPLING_PERIOD=500;
+	public final static int DEFAULT_AGGREGATION_PERIOD=1000;
+	public final static String DEFAULT_AGGREGATION_METHOD="MAX";
+	public final static double DEFAULT_CONVERSION_FACTOR=1.0;
+	
+	
 	
 	public SensorMetaData(String id, DataType dataType,String active)
 	{

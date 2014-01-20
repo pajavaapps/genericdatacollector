@@ -30,7 +30,7 @@ public class DataUploaderReceiver extends BroadcastReceiver implements Runnable 
 					.getSystemService(Context.WIFI_SERVICE);
 			if (!wifiManager.isWifiEnabled()) {
 				Log.i(Constants.GENERIC_COLLECTOR_TAG,
-						"cannot upload gforce data because wifi is not enabled");
+						"cannot upload  data because wifi is not enabled");
 				SystemMonitor.getInstance().setWifiStatus("wifi not enabled");
 				SystemMonitor.getInstance().setUploadStatusCode(Constants.WIFI_NOT_ENABLED);
 				return;
@@ -38,16 +38,17 @@ public class DataUploaderReceiver extends BroadcastReceiver implements Runnable 
 			SystemMonitor.getInstance().setWifiStatus("pinging wifi connection");
 			if (!wifiManager.pingSupplicant()) {
 				Log.i(Constants.GENERIC_COLLECTOR_TAG,
-						"cannot upload gforce data because could not could to wifi");
+						"cannot upload data because could not could to wifi");
 				SystemMonitor.getInstance().setWifiStatus("could not ping backend server");
 				SystemMonitor.getInstance().setLastUploadStatusCode(Constants.COULD_NOT_GET_WIFI_CONNECTION);
 				return;
 			}
 			SystemMonitor.getInstance().setWifiStatus("Wifi OK");
-			DataUploader dataUploade=new DataUploader();
-			Log.i(Constants.GENERIC_COLLECTOR_TAG, "uploaded gforce file");
+			DataUploader dataUploader=new DataUploader();
+			dataUploader.uploadData();
+			Log.i(Constants.GENERIC_COLLECTOR_TAG, "uploaded file");
 		} catch (Exception ex) {
-			Log.e(Constants.GENERIC_COLLECTOR_TAG, "unable to retrieve GForce data file because "
+			Log.e(Constants.GENERIC_COLLECTOR_TAG, "unable to retrieve data file because "
 					+ DataCollectorUtils.getStackTrackElement(ex));
 		}
 		
