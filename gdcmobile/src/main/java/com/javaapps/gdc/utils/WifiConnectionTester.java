@@ -2,8 +2,10 @@ package com.javaapps.gdc.utils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+
 import com.javaapps.gdc.Constants;
-import com.javaapps.gdc.model.Config;
+import com.javaapps.gdc.pojos.Config;
+
 import android.util.Log;
 
 public class WifiConnectionTester {

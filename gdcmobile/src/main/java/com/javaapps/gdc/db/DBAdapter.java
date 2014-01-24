@@ -34,17 +34,17 @@ public class DBAdapter {
 			+ SENSOR_TABLE;
 	private final static String CONFIG_TABLE_CREATE = "create table "
 			+ DEVICE_TABLE
-			+ " ( COMPANY text not null,DEVICE_ID text not null unique, CUSTOM_IDENTIFIER text not null unique)";
+			+ " ( EMAIL text not null,DEVICE_ID text not null unique, CUSTOM_IDENTIFIER text not null unique,DATA_ENDPOINT text not null,BATCH_UPLOAD_SIZE integer not null)";
 	private final static String SENSOR_TABLE_CREATE = "create table "
 			+ SENSOR_TABLE
 			+ " ( ID  text not null unique, DATA_TYPE text not null, DATA_SUBTYPE text,SAMPLING_PERIOD integer default 100,DESCRIPTION text,"
-			+ "AGGREGATION_METHOD text default 'MAX', AGGREGATION_PERIOD integer default 1000 ,ACTIVE text not null default 'N',CONVERSION_FACTOR real default 1.0)";
+			+ "AGGREGATION_METHOD text default 'SIMPLE', AGGREGATION_PERIOD integer default 1000 ,ACTIVE text not null default 'N',CONVERSION_FACTOR real default 1.0)";
 	private final static String SENSOR_COLUMNS[] = { "ID", "DATA_TYPE",
 			"DATA_SUBTYPE", "SAMPLING_PERIOD", "DESCRIPTION",
 			"AGGREGATION_METHOD", "AGGREGATION_PERIOD", "ACTIVE",
 			"CONVERSION_FACTOR" };
-	private final static String DEVICE_COLUMNS[] = { "COMPANY", "DEVICE_ID",
-			"CUSTOM_IDENTIFIER" };
+	private final static String DEVICE_COLUMNS[] = { "EMAIL", "DEVICE_ID",
+			"CUSTOM_IDENTIFIER","DATA_ENDPOINT","BATCH_UPLOAD_SIZE"};
 	private final static String INSERT_GPS="insert into "+SENSOR_TABLE+ "(ID,DATA_TYPE,ACTIVE,DESCRIPTION) values ('1','GPS','N','GPS Sensor')";
 	private final static String INSERT_GFORCE="insert into "+SENSOR_TABLE+ "(ID,DATA_TYPE,ACTIVE,DESCRIPTION) values ('2','GFORCE','N','GForce Sensor')";
 	
@@ -66,13 +66,13 @@ public class DBAdapter {
 			.put("SAMPLING_PERIOD", SensorMetaData.DEFAULT_SAMPLING_PERIOD);
 		}
 		contentValues.put("DESCRIPTION", sensorMetaData.getDescription());
-		if (sensorMetaData.getAggregationMethod() != null)
+		if (sensorMetaData.getAggregationType() != null)
 		{
 		contentValues.put("AGGREGATION_METHOD",
-				sensorMetaData.getAggregationMethod());
+				sensorMetaData.getAggregationType().toString());
 		}else{
 			contentValues.put("AGGREGATION_METHOD",
-					SensorMetaData.DEFAULT_AGGREGATION_METHOD);
+					SensorMetaData.DEFAULT_AGGREGATION_TYPE.toString());
 		}
 		if (sensorMetaData.getAggregationPeriod() > 0)
 		{
@@ -148,10 +148,14 @@ public class DBAdapter {
 
 	public long insertDeviceMetaData(DeviceMetaData deviceMetaData) {
 		ContentValues contentValues = new ContentValues();
-		contentValues.put("COMPANY", deviceMetaData.getCompany());
+		contentValues.put("EMAIL", deviceMetaData.getEmail());
 		contentValues.put("DEVICE_ID", deviceMetaData.getDeviceId());
 		contentValues.put("CUSTOM_IDENTIFIER",
 				deviceMetaData.getCustomIdentifier());
+		contentValues.put("DATA_ENDPOINT",
+				deviceMetaData.getDataEndpoint());
+		contentValues.put("BATCH_UPLOAD_SIZE",
+				deviceMetaData.getUploadBatchSize());
 		if (getAllDeviceMetaData().size() == 0) {
 			return (genericDB.insert(DEVICE_TABLE, null, contentValues));
 		} else {
@@ -181,7 +185,8 @@ public class DBAdapter {
 
 	private DeviceMetaData createDeviceMetaData(Cursor cursor) {
 		DeviceMetaData deviceMetaData = new DeviceMetaData(cursor.getString(0),
-				cursor.getString(1), cursor.getString(2));
+				cursor.getString(1), cursor.getString(2),cursor.getString(3));
+		deviceMetaData.setUploadBatchSize(cursor.getInt(4));
 		return deviceMetaData;
 	}
 

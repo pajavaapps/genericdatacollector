@@ -3,47 +3,57 @@ package com.javaapps.gdc.io;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.util.Log;
 
+import com.javaapps.gdc.pojos.Config;
+import com.javaapps.gdc.aggregators.Aggregator;
+import com.javaapps.gdc.exceptions.OperationNotSupportedException;
+import com.javaapps.gdc.factories.AggregatorFactory;
 import com.javaapps.gdc.io.DataFile;
 import com.javaapps.gdc.Constants;
-import com.javaapps.gdc.model.Config;
 import com.javaapps.gdc.model.GenericData;
 import com.javaapps.gdc.model.SystemMonitor;
+import com.javaapps.gdc.pojos.SensorMetaData;
+import com.javaapps.gdc.types.AggregationType;
 import com.javaapps.gdc.types.DataType;
 import com.javaapps.gdc.utils.DataCollectorUtils;
 
 public class DataBuffer {
 
-	private static DataBuffer dataBuffer;
-
-	private DataType dataType;
-
+	private static Map<String,DataBuffer> dataBufferMap=new HashMap<String,DataBuffer>();
+	
+	private SensorMetaData sensorMetaData;
+	
 	private List<GenericData> dataList = new ArrayList<GenericData>();
 
 	private DataFile dataFile;
+	
+	private Aggregator aggregator;
 
-	// private List<GForceData> shortTermGForceDataList = new
-	// ArrayList<GForceData>();
+
 	private final static float VARIANCE = 0.2f;
 
-	private GenericData lastGenericData = null;
-
-	public static DataBuffer getInstance() throws FileNotFoundException,
-			IOException {
+	public synchronized static DataBuffer getInstance(SensorMetaData sensorMetaData) throws FileNotFoundException,
+			IOException, OperationNotSupportedException {
+		DataBuffer dataBuffer=dataBufferMap.get(sensorMetaData.getId());
 		if (dataBuffer == null) {
-			dataBuffer = new DataBuffer();
+			dataBuffer = new DataBuffer(sensorMetaData);
+			dataBuffer.aggregator=AggregatorFactory.createAggregator(sensorMetaData);
+			dataBufferMap.put(sensorMetaData.getId(), dataBuffer);
 		}
 		return dataBuffer;
 	}
 
-	private DataBuffer() throws FileNotFoundException, IOException {
-		Log.i(Constants.GENERIC_COLLECTOR_TAG, "opening gforce internal file");
-		dataFile = new DataFile(dataType, Config.getInstance()
+	private DataBuffer(SensorMetaData sensorMetaData) throws FileNotFoundException, IOException {
+		this.sensorMetaData=sensorMetaData;
+		Log.i(Constants.GENERIC_COLLECTOR_TAG, "opening internal file for "+sensorMetaData);
+		dataFile = new DataFile(sensorMetaData, Config.getInstance()
 				.getDataFileExtension());
-		Log.i(Constants.GENERIC_COLLECTOR_TAG, "opened gforce internal file");
+		Log.i(Constants.GENERIC_COLLECTOR_TAG, "opened  internal file for "+sensorMetaData);
 	}
 
 	public void flushBuffer() {
@@ -62,16 +72,20 @@ public class DataBuffer {
 	}
 
 	public void logData(GenericData genericData) {
+		genericData=aggregator.getAggregatedValue(genericData);
+		if ( genericData == null){
+			return;
+		}
 		long currentTime = System.currentTimeMillis();
-		dataList.add(lastGenericData);
-		lastGenericData = null;
-		SystemMonitor.getInstance().getMonitor(dataType)
+		dataList.add(genericData);
+		SystemMonitor.getInstance().getMonitor(sensorMetaData.getId())
 				.incrementTotalPointsLogged(1);
-		SystemMonitor.getInstance().getMonitor(dataType)
+		SystemMonitor.getInstance().getMonitor(sensorMetaData.getId())
 				.setPointsInBuffer(dataList.size());
 		dataFile.updateTimeStamp();
-		if (dataList.size() > Config.getInstance()
-				.getGforceListenerBufferSize()) {
+		Log.d(Constants.GENERIC_COLLECTOR_TAG,"logging data "+genericData+"\n buffer size "+dataList.size());
+		if (dataList.size() > 10) {//TODO setup config
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,"flushing buffer for "+sensorMetaData);
 			flushBuffer();
 		}
 	}

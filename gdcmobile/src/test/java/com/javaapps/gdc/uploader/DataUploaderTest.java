@@ -26,9 +26,10 @@ import org.robolectric.RobolectricTestRunner;
 
 import com.javaapps.gdc.factories.GenericDataFactory;
 import com.javaapps.gdc.io.DataFile;
-import com.javaapps.gdc.model.Config;
 import com.javaapps.gdc.model.FileResultMapsWrapper;
 import com.javaapps.gdc.model.GenericData;
+import com.javaapps.gdc.pojos.Config;
+import com.javaapps.gdc.pojos.DeviceMetaData;
 import com.javaapps.gdc.types.DataType;
 import com.javaapps.gdc.utils.MockHttpClientFactory;
 import com.javaapps.gdc.utils.WifiConnectionTester;
@@ -48,9 +49,9 @@ public class DataUploaderTest {
 			if (!testFileDir.exists()) {
 				testFileDir.mkdir();
 			}
-
-			Config.getInstance().setServerURL(
-					"http://boguswebsite.go");
+            DeviceMetaData deviceMetaData=new DeviceMetaData();
+            deviceMetaData.setDataEndpoint("http://boguswebsite.go");
+			Config.setConfigInstance(deviceMetaData);
 			Config.getInstance().setFilesDir(testFileDir);
 		} catch (Exception ex) {
 			fail("LocationDataUploaderHandlerTest setup failed because "

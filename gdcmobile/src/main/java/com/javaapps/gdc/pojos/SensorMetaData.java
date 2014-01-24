@@ -2,6 +2,7 @@ package com.javaapps.gdc.pojos;
 
 import java.io.Serializable;
 
+import com.javaapps.gdc.types.AggregationType;
 import com.javaapps.gdc.types.DataType;
 
 public class SensorMetaData implements Serializable {	
@@ -10,14 +11,14 @@ public class SensorMetaData implements Serializable {
 	private String dataSubType;
 	private int samplingPeriod;
 	private String description;
-	private String aggregationMethod;
+	private AggregationType aggregationType;
 	private int aggregationPeriod;
 	private String active;
 	private double conversionFactor;
 	
 	public final static int DEFAULT_SAMPLING_PERIOD=500;
 	public final static int DEFAULT_AGGREGATION_PERIOD=1000;
-	public final static String DEFAULT_AGGREGATION_METHOD="MAX";
+	public final static AggregationType DEFAULT_AGGREGATION_TYPE=AggregationType.SIMPLE;
 	public final static double DEFAULT_CONVERSION_FACTOR=1.0;
 	
 	
@@ -30,14 +31,14 @@ public class SensorMetaData implements Serializable {
 	}
 	
 	public SensorMetaData(String id, String dataType, String dataSubType,
-			int samplingPeriod, String description, String aggregationMethod,
+			int samplingPeriod, String description, String aggregationType,
 			int aggregationPeriod, String active, double conversionFactor) {
 		this.id = id;
 		this.dataType = DataType.valueOf(dataType);
 		this.dataSubType = dataSubType;
 		this.samplingPeriod = samplingPeriod;
 		this.description = description;
-		this.aggregationMethod = aggregationMethod;
+		this.aggregationType = AggregationType.valueOf(aggregationType);
 		this.aggregationPeriod = aggregationPeriod;
 		this.active = active;
 		this.conversionFactor = conversionFactor;
@@ -73,12 +74,15 @@ public class SensorMetaData implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getAggregationMethod() {
-		return aggregationMethod;
+	
+	public AggregationType getAggregationType() {
+		return aggregationType;
 	}
-	public void setAggregationMethod(String aggregationMethod) {
-		this.aggregationMethod = aggregationMethod;
+
+	public void setAggregationType(AggregationType aggregationType) {
+		this.aggregationType = aggregationType;
 	}
+
 	public int getAggregationPeriod() {
 		return aggregationPeriod;
 	}
@@ -102,7 +106,7 @@ public class SensorMetaData implements Serializable {
 		return "SensorMetaData [id=" + id + ", dataType=" + dataType
 				+ ", dataSubType=" + dataSubType + ", SamplingPeriod="
 				+ samplingPeriod + ", description=" + description
-				+ ", aggregationMethod=" + aggregationMethod
+				+ ", aggregationType=" + aggregationType
 				+ ", aggregationPeriod=" + aggregationPeriod + ", active="
 				+ active + ", conversionFactor=" + conversionFactor + "]";
 	}

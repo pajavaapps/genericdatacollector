@@ -9,6 +9,7 @@ import com.javaapps.gdc.R;
 import com.javaapps.gdc.db.DBAdapter;
 import com.javaapps.gdc.exceptions.BlueToothNotSupportedException;
 import com.javaapps.gdc.pojos.*;
+import com.javaapps.gdc.receivers.DataCollectorReceiver;
 import com.javaapps.gdc.types.DataType;
 
 import android.app.Activity;
@@ -68,6 +69,9 @@ public class GenericCollectorActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
+			if (! checkForConfiguration()){
+				return;
+			}
 			Intent i = new Intent();
 			i.setAction(LAUNCH_COLLECTOR);
 			this.sendBroadcast(i);
@@ -82,6 +86,24 @@ public class GenericCollectorActivity extends ListActivity {
 	}
 
 	
+
+	private boolean checkForConfiguration() {
+		try
+		{
+		dbAdapter.open();
+		DeviceMetaData deviceMetaData=dbAdapter.getDeviceMetaData();
+		return (deviceMetaData != null);
+		}catch(Exception ex){
+			String errorStr="Cannot retrieve device meta data because "+ex.getMessage();
+			Toast.makeText(this,errorStr, Toast.LENGTH_LONG);
+			Log.e(Constants.GENERIC_COLLECTOR_TAG,errorStr);
+			return false;
+		}finally{
+			dbAdapter.close();
+		}
+	}
+
+
 
 	@Override
 	public void onDestroy() {
@@ -300,6 +322,9 @@ public class GenericCollectorActivity extends ListActivity {
 							"Unable to change sensor meta data activity");
 				} finally {
 					GenericCollectorActivity.this.dbAdapter.close();
+					Intent startCollectingIntent = new Intent();
+					startCollectingIntent.setAction(DataCollectorReceiver.COLLECT_GENERIC_DATA);
+					GenericCollectorActivity.this.sendBroadcast(startCollectingIntent );
 				}
 			}
 		}

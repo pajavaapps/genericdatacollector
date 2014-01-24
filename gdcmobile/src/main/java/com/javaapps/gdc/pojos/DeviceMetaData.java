@@ -1,24 +1,30 @@
 package com.javaapps.gdc.pojos;
 public class DeviceMetaData {
 	
-	private String company;
+	private String email;
 	private String deviceId;
 	private String customIdentifier;
+	private String dataEndpoint;
+	private int uploadBatchSize=100;
 	
 	
 	
-	public DeviceMetaData(String company, String deviceId,
-			String customIdentifier) {
-		this.company = company;
+	public DeviceMetaData(String email, String deviceId,
+			String customIdentifier,String dataEndpoint) {
+		this.email = email;
 		this.deviceId = deviceId;
 		this.customIdentifier = customIdentifier;
+		this.dataEndpoint=dataEndpoint;
 	}
 	
-	public String getCompany() {
-		return company;
+	public DeviceMetaData() {
 	}
-	public void setCompany(String company) {
-		this.company = company;
+
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String company) {
+		this.email = company;
 	}
 	public String getDeviceId() {
 		return deviceId;
@@ -33,11 +39,26 @@ public class DeviceMetaData {
 		this.customIdentifier = customIdentifier;
 	}
 
-	@Override
-	public String toString() {
-		return "DeviceMetaData [company=" + company + ", deviceId=" + deviceId
-				+ ", customIdentifier=" + customIdentifier + "]";
+	
+
+	public int getUploadBatchSize() {
+		return uploadBatchSize;
 	}
+
+	public void setUploadBatchSize(int uploadBatchSize) {
+		this.uploadBatchSize = uploadBatchSize;
+	}
+
+	public String getDataEndpoint() {
+		return dataEndpoint;
+	}
+
+	public void setDataEndpoint(String dataEndpoint) {
+		this.dataEndpoint = dataEndpoint;
+	}
+
+	
+	
 	
 	
 

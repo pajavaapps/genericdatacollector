@@ -113,7 +113,7 @@ public class SensorConfigurationActivity extends Activity {
 			sensorMetaData.setAggregationPeriod(Integer.parseInt(aggregationPeriodView.getText().toString()));
 			EditText conversionFactorView = (EditText) findViewById(R.id.configConversionFactor);
 			sensorMetaData.setConversionFactor(Double.parseDouble(conversionFactorView.getText().toString()));
-			sensorMetaData.setAggregationMethod(SensorMetaData.DEFAULT_AGGREGATION_METHOD);
+			sensorMetaData.setAggregationType(SensorMetaData.DEFAULT_AGGREGATION_TYPE);
 			dbAdapter=new DBAdapter(SensorConfigurationActivity.this);
 			dbAdapter.open();
 			dbAdapter.updateSensorMetaData(sensorMetaData);

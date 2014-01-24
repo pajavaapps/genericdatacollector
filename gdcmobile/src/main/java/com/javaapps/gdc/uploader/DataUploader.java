@@ -34,7 +34,7 @@ import com.javaapps.gdc.utils.JSONUtils;
 import com.javaapps.gdc.utils.WifiConnectionTester;
 import com.javaapps.gdc.factories.GenericDataFactory;
 import com.javaapps.gdc.io.DataFile;
-import com.javaapps.gdc.model.Config;
+import com.javaapps.gdc.pojos.Config;
 import com.javaapps.gdc.model.DataUpload;
 import com.javaapps.gdc.model.FileResultMap;
 import com.javaapps.gdc.model.FileResultMapsWrapper;
@@ -59,6 +59,7 @@ public class DataUploader {
 	public void uploadData() {
 		if (!WifiConnectionTester.testConnection())
 		{
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,"Cannot get wifi connection.  Skipping upload");
 			SystemMonitor.getInstance().setLastUploadStatusCode(Constants.COULD_NOT_GET_WIFI_CONNECTION);
 			return;
 		}
@@ -180,8 +181,6 @@ public class DataUploader {
 			return true;
 		}
 		boolean retValue = true;
-		SystemMonitor.getInstance().getMonitor(dataType).incrementTotalPointsUploaded(
-				dataList.size());
 		// upload timestamp will be the first date in the list
 		Config config=Config.getInstance();
 		DataUpload dataUpload = new DataUpload(config.getDeviceId(),
@@ -225,7 +224,7 @@ public class DataUploader {
 				try {
 					HttpPost httppost = new HttpPost(Config.getInstance()
 
-					.getLocationDataEndpoint());
+					.getDataEndpoint());
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
 							2);
 					nameValuePairs.add(new BasicNameValuePair("data", jsonStr));
@@ -234,8 +233,6 @@ public class DataUploader {
 					int statusCode = response.getStatusLine().getStatusCode();
 					fileResultMap.getResultMap().put(index, statusCode);
 					if (statusCode / 100 == 2) {
-						SystemMonitor.getInstance().getMonitor(dataType).incrementTotalPointsProcessed(
-								batchSize);
 						if (fileResultMap.allBatchesUploaded()) {
 							File file = new File(fileResultMap.getFileName());
 							if (!file.delete()) {

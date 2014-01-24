@@ -1,5 +1,7 @@
 package com.javaapps.gdc.factories;
 
+import android.hardware.SensorEvent;
+import android.location.Location;
 import android.util.Log;
 
 import com.javaapps.gdc.Constants;
@@ -24,6 +26,19 @@ public class GenericDataFactory {
 			Log.e(Constants.GENERIC_COLLECTOR_TAG, "Unsupported data type");
 			return null;
 		}
+	}
+
+	public static GenericData createGenericData(
+			Location location) {
+		GPS gps=new GPS(location.getLatitude(), location.getLongitude(), location.getSpeed(),
+				location.getBearing(), location.getAltitude(), location.getTime());
+		return gps;
+	}
+
+	public static GenericData createGenericData(
+			SensorEvent sensorEvent) {
+		GForce gforce=new GForce(sensorEvent.values[0],sensorEvent.values[1],sensorEvent.values[2],System.currentTimeMillis());
+		return gforce;
 	}
 
 }

@@ -11,6 +11,7 @@ import org.robolectric.shadows.ShadowApplication;
 import com.javaapps.gdc.activities.GenericCollectorActivity;
 import com.javaapps.gdc.pojos.DeviceMetaData;
 import com.javaapps.gdc.pojos.SensorMetaData;
+import com.javaapps.gdc.types.AggregationType;
 import com.javaapps.gdc.types.DataType;
 
 import static org.junit.Assert.fail;
@@ -72,7 +73,7 @@ public class DBAdapterTest extends AndroidTestCase {
 	public void test() {
 		SensorMetaData sensorMetaData = new SensorMetaData("id",
 				DataType.GPS.toString(), "dataSubType", 1, "description",
-				"aggregationMethod", 2, "Y", 3.0);
+				AggregationType.SIMPLE.toString(), 2, "Y", 3.0);
 		System.out.println(sensorMetaData);
 		assertTrue(dbAdapter.insertSensorMetaData(sensorMetaData) != -1);
 		sensorMetaData = dbAdapter.getSensorMetaData("id");
@@ -81,7 +82,7 @@ public class DBAdapterTest extends AndroidTestCase {
 		assertEquals("GPS", sensorMetaData.getDataType().toString());
 		assertEquals("dataSubType", sensorMetaData.getDataSubType());
 		assertEquals("description", sensorMetaData.getDescription());
-		assertEquals("aggregationMethod", sensorMetaData.getAggregationMethod());
+		assertTrue(AggregationType.SIMPLE== sensorMetaData.getAggregationType());
 		assertEquals(1, sensorMetaData.getSamplingPeriod());
 		assertEquals(2, sensorMetaData.getAggregationPeriod());
 		assertEquals(3.0, sensorMetaData.getConversionFactor());
@@ -103,28 +104,29 @@ public class DBAdapterTest extends AndroidTestCase {
 		assertEquals(500, sensorMetaData1.getSamplingPeriod());
 		assertEquals(1.0, sensorMetaData1.getConversionFactor());
 		assertEquals(1000, sensorMetaData1.getAggregationPeriod());
-		assertEquals("MAX", sensorMetaData1.getAggregationMethod());
+		assertTrue(AggregationType.SIMPLE == sensorMetaData1.getAggregationType());
 		 dbAdapter.delete(sensorMetaData1);
 		 assertNull( dbAdapter.getSensorMetaData("id2"));
 		
 		DeviceMetaData deviceMetaData = new DeviceMetaData("company",
-				"deviceId", "customIdentifier");
+				"deviceId", "customIdentifier","dataendpoint");
 		System.out.println(deviceMetaData);
 		assertTrue(dbAdapter.insertDeviceMetaData(deviceMetaData) != -1);
 		deviceMetaData = dbAdapter.getDeviceMetaData();
 		assertNotNull(deviceMetaData);
-		assertEquals("company", deviceMetaData.getCompany());
+		assertEquals("company", deviceMetaData.getEmail());
 		assertEquals("deviceId", deviceMetaData.getDeviceId());
 		assertEquals("customIdentifier", deviceMetaData.getCustomIdentifier());
-
+		assertEquals("dataendpoint", deviceMetaData.getDataEndpoint());
+		assertEquals(100, deviceMetaData.getUploadBatchSize());
 		deviceMetaData = new DeviceMetaData("company1", "deviceId1",
-				"customIdentifier1");
+				"customIdentifier1","dataendpoint");
 
 		assertTrue(dbAdapter.insertDeviceMetaData(deviceMetaData) != -1);
 		deviceMetaData = dbAdapter.getDeviceMetaData();
 		assertEquals(1,dbAdapter.getAllDeviceMetaData().size() );
 		assertNotNull(deviceMetaData);
-		assertEquals("company1", deviceMetaData.getCompany());
+		assertEquals("company1", deviceMetaData.getEmail());
 		assertEquals("deviceId1", deviceMetaData.getDeviceId());
 		
 		assertEquals("customIdentifier1", deviceMetaData.getCustomIdentifier());

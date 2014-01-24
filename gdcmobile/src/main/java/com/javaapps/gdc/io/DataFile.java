@@ -16,30 +16,37 @@ import android.util.Log;
 
 import com.javaapps.gdc.Constants;
 import com.javaapps.gdc.interfaces.CsvWriter;
-import com.javaapps.gdc.model.Config;
 import com.javaapps.gdc.model.Monitor;
 import com.javaapps.gdc.model.SystemMonitor;
+import com.javaapps.gdc.pojos.SensorMetaData;
 import com.javaapps.gdc.types.DataType;
 import com.javaapps.gdc.utils.DataCollectorUtils;
 
 public class DataFile<T> {
 
 	public final static String ARCHIVE_STRING = "_archive_";
+	private static final String DATA_DIR = "genericdata";
 
 	private final ReentrantLock lock = new ReentrantLock();
 
 	private File filesDir;
-	private DataType dataType;
+	private SensorMetaData sensorMetaData;
 	private String extension;
 
-	public DataFile(DataType dataType, String extension)
+	public DataFile(SensorMetaData sensorMetaData, String extension)
 			throws FileNotFoundException, IOException {
-		this.filesDir = Config.getInstance().getFilesDir();
-		this.dataType = dataType;
+		filesDir=new File(Environment.getExternalStorageDirectory(),DATA_DIR);
+        if ( ! filesDir.exists()){
+        	if ( ! filesDir.mkdirs()){
+        		Log.e(Constants.GENERIC_COLLECTOR_TAG,"Cannot create sdcard data directory");
+        	}
+        }
+		this.sensorMetaData = sensorMetaData;
 		this.extension = extension;
 	}
 
 	public void deleteFiles() {
+		DataType dataType=sensorMetaData.getDataType();
 		for (File file : filesDir.listFiles()) {
 			if (file.getName().startsWith(dataType.getPrefix() + ARCHIVE_STRING)) {
 				file.delete();
@@ -48,6 +55,7 @@ public class DataFile<T> {
 	}
 
 	public List<T> writeToObjectFile(List<T> objectList) throws IOException {
+		DataType dataType=sensorMetaData.getDataType();
 		List<T> retList = new ArrayList<T>();
 		boolean isNotLocked = lock.tryLock();
 		// If it is locked then just return the list and try to save it another
@@ -67,12 +75,18 @@ public class DataFile<T> {
 			}
 		} 
 		file = new File(filesDir, getActiveFileName());
+		Log.i(Constants.GENERIC_COLLECTOR_TAG,"Opening buffer file "+file.getAbsolutePath());
 		FileOutputStream fileOutputStream = null;
 		try {
 			fileOutputStream = new FileOutputStream(file,true);
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,"Opening output stream "+fileOutputStream);
 			boolean errorThrown = false;
 			for (T object : objectList) {
 				try {
+					if ( object == null ){
+						Log.i(Constants.GENERIC_COLLECTOR_TAG,"cannot save null object to file");
+						continue;
+					}
 					if (errorThrown) {
 						retList.add(object);
 					} else {
@@ -81,7 +95,7 @@ public class DataFile<T> {
 				} catch (Exception ex) {
 					errorThrown = true;
 					Log.e(Constants.GENERIC_COLLECTOR_TAG, "cannot save " + dataType.getPrefix()
-							+ " buffer because " +DataCollectorUtils.getStackTrackElement(ex));
+							+ " buffer because " +DataCollectorUtils.getStackTrackElement(ex),ex);
 					retList.add(object);
 				}
 			}
@@ -91,7 +105,7 @@ public class DataFile<T> {
 				fileOutputStream.close();
 			}
 			if (file.getName().startsWith("location")) {
-				SystemMonitor.getInstance().getMonitor(dataType).setCurrentFileSize(file.length());
+				SystemMonitor.getInstance().getMonitor(sensorMetaData.getId()).setCurrentFileSize(file.length());
 			} 
 			setArchiveFileNamesOnMonitor();
 			lock.unlock();
@@ -100,12 +114,12 @@ public class DataFile<T> {
 	}
 
 	private String getActiveFileName() {
-		return dataType.getPrefix() + "." + extension;
+		return sensorMetaData.getDataType().getPrefix() + "." + extension;
 	}
 
 	private String getArchiveFileName() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-		return dataType.getPrefix() + ARCHIVE_STRING + dateFormat.format(new Date()) + "."
+		return sensorMetaData.getDataType().getPrefix() + ARCHIVE_STRING + dateFormat.format(new Date()) + "."
 				+ extension;
 	}
 
