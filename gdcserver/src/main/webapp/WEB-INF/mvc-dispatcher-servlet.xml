@@ -13,7 +13,7 @@
     http://www.springframework.org/schema/tx/spring-tx.xsd">
 	<mvc:annotation-driven />
 	
-	<context:property-placeholder location="/WEB-INF/classes/legaltrackerserver.properties"/>
+	<context:property-placeholder location="/WEB-INF/classes/genericdataserver.properties"/>
 	
 	<context:component-scan base-package="com.javaapps" />
 	<bean
@@ -46,10 +46,10 @@
 				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
 			</props>
 		</property>
-		<property name="packagesToScan" value="com.javaapps.legaltracker.entities" />
+		<property name="packagesToScan" value="com.javaapps.gdc.entities" />
 	</bean>
 
-	<bean id="mongoDBFactory" class="com.javaapps.legaltracker.utils.MongoDBFactory">
+	<bean id="mongoDBFactory" class="com.javaapps.gdc.utils.MongoDBFactory">
 		<constructor-arg index="0" value="${mongo.host}" />
 		<constructor-arg index="1" value="${mongo.port}" />
 		<constructor-arg index="2" value="${mongo.db}" />

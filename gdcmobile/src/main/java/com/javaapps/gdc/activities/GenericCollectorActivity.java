@@ -48,6 +48,8 @@ public class GenericCollectorActivity extends ListActivity {
 
 	private final BroadcastReceiver bluetoothReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
+			try
+			{
 			String action = intent.getAction();
 			Log.i(Constants.GENERIC_COLLECTOR_TAG, "Received bluetooth intent");
 			// When discovery finds a device
@@ -62,6 +64,9 @@ public class GenericCollectorActivity extends ListActivity {
 				GenericCollectorActivity.this.addBluetoothDevice(device);
 				Log.i(Constants.GENERIC_COLLECTOR_TAG, "Getting bonded devices");
 			}
+			}catch(Exception ex){
+				Log.e(Constants.GENERIC_COLLECTOR_TAG,"Error receiving bluetooth intent "+ex.getMessage(),ex);
+			}
 		}
 	};
 
@@ -70,6 +75,8 @@ public class GenericCollectorActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		try {
 			if (! checkForConfiguration()){
+				Intent intent = new Intent(this, ConfigurationActivity.class);
+				startActivity(intent);
 				return;
 			}
 			Intent i = new Intent();
@@ -88,15 +95,17 @@ public class GenericCollectorActivity extends ListActivity {
 	
 
 	private boolean checkForConfiguration() {
+		DBAdapter dbAdapter=new DBAdapter(this);
 		try
 		{
 		dbAdapter.open();
 		DeviceMetaData deviceMetaData=dbAdapter.getDeviceMetaData();
+		Log.i(Constants.GENERIC_COLLECTOR_TAG,"Retrieved device meta data "+deviceMetaData);
 		return (deviceMetaData != null);
 		}catch(Exception ex){
 			String errorStr="Cannot retrieve device meta data because "+ex.getMessage();
 			Toast.makeText(this,errorStr, Toast.LENGTH_LONG);
-			Log.e(Constants.GENERIC_COLLECTOR_TAG,errorStr);
+			Log.e(Constants.GENERIC_COLLECTOR_TAG,errorStr,ex);
 			return false;
 		}finally{
 			dbAdapter.close();
@@ -163,10 +172,20 @@ public class GenericCollectorActivity extends ListActivity {
 
 	private void setSensorArrayAdapter() {
 		Log.i(Constants.GENERIC_COLLECTOR_TAG, "Setting sensor array adapter");
+		try
+		{
 		setSensorMetaDataList();
 		SensorViewAdapter adapter = new SensorViewAdapter(this,
 				sensorMetaDataList);
 		this.setListAdapter(adapter);
+		}catch(Exception ex){
+			String errorStr="Cannot set sensor array adapter because "+ex.getMessage();
+			Log.e(Constants.GENERIC_COLLECTOR_TAG,
+					errorStr, ex);
+			Toast.makeText(this,
+					errorStr,
+					Toast.LENGTH_LONG);
+		}
 	}
 
 	@Override
@@ -192,6 +211,10 @@ public class GenericCollectorActivity extends ListActivity {
 						"Could not scan in bluetooth devices because "
 								+ e.getMessage(), Toast.LENGTH_LONG);
 			}
+			return true;
+		case R.id.configureDevice:
+			Intent intent = new Intent(this, ConfigurationActivity.class);
+			startActivity(intent);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

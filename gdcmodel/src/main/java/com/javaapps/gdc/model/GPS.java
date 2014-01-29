@@ -3,6 +3,8 @@ package com.javaapps.gdc.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import com.javaapps.gdc.interfaces.CsvWriter;
 
 
@@ -21,8 +23,11 @@ public class GPS extends GenericData{
 
 	private double altitude;
 
-
-
+    public GPS()
+    {
+    	
+    }
+    
 	public GPS(String csvString) {
 		String props[] = csvString.split("\\,");
 		if (props.length < 6) {
@@ -34,12 +39,12 @@ public class GPS extends GenericData{
 		longitude = Double.parseDouble(props[2]);
 		speed = Float.parseFloat(props[3]);
 		bearing = Float.parseFloat(props[4]);
-		altitude = Float.parseFloat(props[5]);
+		altitude = Double.parseDouble(props[5]);
 
 	}
 
 	public GPS(double latitude, double longitude, float speed,
-			float bearing, float altitude, long sampleDateTime) {
+			float bearing, double altitude, long sampleDateTime) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.systemDate = new Date();
@@ -53,7 +58,7 @@ public class GPS extends GenericData{
 		return serialVersionUID;
 	}
 
-	public Date getDate() {
+	public Date getSystemDate() {
 		return systemDate;
 	}
 
@@ -85,10 +90,9 @@ public class GPS extends GenericData{
 
 	@Override
 	public String toString() {
-		return "LegalTrackerLocation [systemDate=" + systemDate
-				+ ", sampleDate=" + sampleDate + ", latitude=" + latitude + ", longitude="
-				+ longitude + ", speed=" + speed + ", bearing=" + bearing
-				+ ", altitude=" + altitude + "]";
+		return "GPS [latitude=" + latitude + ", longitude=" + longitude
+				+ ", speed=" + speed + ", bearing=" + bearing + ", altitude="
+				+ altitude + "]";
 	}
 
 	public String toCSV() {
@@ -96,6 +100,7 @@ public class GPS extends GenericData{
 				+ speed + "," + bearing + "," + altitude + "\n";
 	}
 
+	@JsonIgnore
 	public String getDisplayString() {
 		return latitude + "," + longitude + "," + speed + "," + bearing;
 	}

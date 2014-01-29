@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/configurationExplanation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/configurationExplanation"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/emailLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+               android:layout_marginTop="10dp"
+        android:text="@string/email"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+                     android:layout_marginTop="10dp"
+        android:ems="10"
+        android:inputType="textEmailAddress" >
+        
+    </EditText>
+
+    <TextView
+        android:id="@+id/deviceNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+                     android:layout_marginTop="10dp"
+        android:text="@string/deviceName"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/deviceName"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+                     android:layout_marginTop="10dp"
+        android:ems="10"
+        android:inputType="text" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/dataEndpointLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+                     android:layout_marginTop="10dp"
+        android:text="@string/dataEndpoint"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/dataEndpoint"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+                     android:layout_marginTop="10dp"
+        android:ems="10"
+        android:inputType="textUri" >
+    </EditText>
+<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="20dp" >
+
+        <Button
+            android:id="@+id/sysConfigSave"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:text="@string/save"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/sysConfigCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:text="@string/cancel"
+            android:textSize="12sp" />
+    </LinearLayout>
+    
+</LinearLayout>

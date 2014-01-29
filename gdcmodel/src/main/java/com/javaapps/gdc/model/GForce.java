@@ -1,7 +1,10 @@
 package com.javaapps.gdc.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.javaapps.gdc.interfaces.CsvWriter;
 
@@ -14,6 +17,7 @@ public class GForce extends GenericData  {
 	private float z;
 	private final static float VARIANCE = 0.4f;
 
+	@JsonIgnore
 	public double getGforce() {
 		return Math.sqrt(x * x + y * y + z * z);
 	}
@@ -27,14 +31,14 @@ public class GForce extends GenericData  {
       if (props.length < 4){
     	  return;
       }
-      this.sampleDate.setTime(Long.parseLong(props[0]));
+      this.sampleDate=new Date(Long.parseLong(props[0]));
       this.x=Float.parseFloat(props[1]);
       this.y=Float.parseFloat(props[2]);
       this.z=Float.parseFloat(props[3]);
 	}
 
 	public GForce(float x, float y, float z, long sampleDateInMillis) {
-		this.sampleDate.setTime( sampleDateInMillis);
+		this.sampleDate=new Date( sampleDateInMillis);
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -113,9 +117,6 @@ public class GForce extends GenericData  {
 		return retGForceData;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.javaapps.legaltracker.pojos.CsvWriter#toCSV()
-	 */
 
 	public String toCSV() {
 		return sampleDate.getTime() + "," +x+ "," + y + "," + z + "\n";

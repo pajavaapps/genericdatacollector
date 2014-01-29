@@ -10,10 +10,11 @@
         android:targetPackage="com.javaapps.gdc" />
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="10"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -37,21 +38,36 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.javaapps.gdc.activities.SensorConfigurationActivity" >
+        </activity>
+ <activity android:name="com.javaapps.gdc.activities.ConfigurationActivity" >
+        </activity>
 
         <receiver android:name="com.javaapps.gdc.receivers.DataUploaderReceiver" >
             <intent-filter>
-                <action android:name="locationDataIntent" />
+                <action android:name="genericDataIntent" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.javaapps.gdc.receivers.LaunchAllReceiver" >
+        <receiver
+            android:name="com.javaapps.gdc.receivers.LaunchAllReceiver"
+            android:enabled="true"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="kickOffLogger" />
-
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="launchCollector" />
+                <action android:name="android.intent.action.ACTION_MY_PACKAGE_REPLACED" />
+                 <action android:name="android.intent.action.ACTION_REBOOT" />
             </intent-filter>
+        </receiver>
+          <receiver
+            android:name="com.javaapps.gdc.receivers.DataCollectorReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="collectGenericData" />
+             </intent-filter>
         </receiver>
     </application>
 

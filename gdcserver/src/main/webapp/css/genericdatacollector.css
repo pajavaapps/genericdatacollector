@@ -1,0 +1,760 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: tahoma, arial, verdana, sans-serif;
+  font-size: 12px;
+  height: 100%;
+}
+ 
+html {
+}
+ 
+p {
+ padding: 3px;
+}
+ 
+h1 {
+  padding: 5px 0;
+  font-size: 14px;
+}
+ 
+h2, h3, h4, h5 {
+  padding: 5px 0;
+  margin: 0;
+  font-size: 13px;
+}
+ 
+strong {
+  font-weight: bold;
+}
+ 
+input, select, textarea {
+  font-family: tahoma, arial, verdana, sans-serif;
+  font-size: 12px;
+}
+ 
+div#r-container {
+  text-align: left;
+  vertical-align: top;
+  position: relative;
+  width: 960px;
+  margin: 0 auto;
+}
+ 
+div#r-menu {
+  position: relative;
+  margin: 0;
+  border: 0;
+}
+ 
+#r-menu .yuimenubar {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+}
+ 
+div#r-body {
+  margin: 0 auto;
+  padding: 10px 0;
+  width: 950px;
+}
+ 
+.r-panel, .r-error-panel {
+  margin: 2px;
+  border: 1px solid #808080;
+  background-color: #fff;
+}
+ 
+.r-error-panel {
+  border: 1px solid red;
+}
+ 
+.r-panel-header, .r-error-header {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  color: #15428b;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: bold;
+  padding: 5px 3px 4px 5px;
+  border-bottom: 0;
+  line-height: 17px;
+  background-color: transparent;
+  background-image: url( ../images/bg_grey.png );
+  background-repeat: repeat-x;
+  background-attachment: scroll;
+  margin: 0;
+}
+ 
+.r-error-header {
+  color: red;
+}
+ 
+.r-panel-body, .r-error-body {
+  font-family: tahoma, arial, verdana, sans-serif;
+  font-style: normal;
+  font-variant: normal;
+  padding: 5px;
+  margin: 0;
+  line-height: 12px;
+  background-color: #fff;
+}
+ 
+.r-image-progress-bar {
+  background-position: left;
+  background-repeat: no-repeat;
+  background-image: url( ../images/progress_bar.gif );
+}
+ 
+.r-icon-alert, .r-icon-info, .r-icon-plus, .r-icon-minus, .r-icon-up, .r-icon-down, .r-icon-person, .r-icon-org, .r-icon-edit, .r-icon-check, .r-icon-cancel, .r-icon-find, .r-icon-requeue, .r-grid-page-prev, .r-grid-page-prev-disabled, .r-grid-page-next, .r-grid-page-next-disabled, .r-icon-open, .r-icon-close, .r-icon-help, .r-icon-comment, .r-icon-note, .r-icon-clock, .r-icon-web, .r-icon-media, .r-icon-spacer, .r-icon-cross, .r-icon-lnlogo, .r-icon-lnlink{
+  background-position: 2px;
+  background-repeat: no-repeat;
+  padding: 2px 0 0 20px;
+  line-height: 15px;
+}
+ 
+.r-grid-page-prev, .r-grid-page-prev-disabled, .r-grid-page-next, .r-grid-page-next-disabled {
+  padding: 2px 0 0 15px;
+}
+ 
+.r-icon-spacer {
+  background-image: url( ../images/icons/empty.png );
+}
+ 
+.r-icon-web {
+  background-image: url( ../images/icons/web.png );
+}
+ 
+.r-icon-media {
+  background-image: url( ../images/icons/newspaper.png );
+}
+ 
+.r-icon-lnlogo{
+  background-image: url( ../images/icons/lexisnexis_logo.gif );
+  padding-top: 4px;
+  padding-right: 4px;
+  padding-bottom: 4px;
+  padding-left: 4px;
+}
+ 
+.r-icon-lnlink{
+  background-image: url( ../images/icons/lexisnexis_link.gif );
+}
+ 
+.r-icon-lexisnexis-logo{
+  background-image: url( ../images/icons/lexisnexis_logo.gif );
+}
+ 
+.r-icon-lexisnexis-link{
+  background-image: url( ../images/icons/lexisnexis_link.gif );
+}
+ 
+.r-icon-info {
+  background-image: url( ../images/icons/info.png );
+}
+ 
+.r-icon-help {
+  background-image: url( ../images/icons/help.png );
+}
+ 
+.r-icon-comment {
+  background-image: url( ../images/icons/comment.png );
+}
+ 
+.r-icon-note {
+  background-image: url( ../images/icons/note.png );
+}
+ 
+.r-icon-alert {
+  background-image: url( ../images/icons/exclamation.png );
+}
+ 
+.r-icon-up {
+  background-image: url( ../images/icons/arrow_head_up.png );
+}
+ 
+.r-icon-down {
+  background-image: url( ../images/icons/arrow_head_down.png );
+}
+ 
+.r-icon-plus {
+  background-image: url( ../images/icons/plus.png );
+}
+ 
+.r-icon-minus {
+  background-image: url( ../images/icons/minus.png );
+}
+ 
+.r-icon-person {
+  background-image: url( ../images/icons/user_red.png );
+}
+ 
+.r-icon-org {
+  background-image: url( ../images/icons/building.png );
+}
+ 
+.r-icon-clock {
+  background-image: url( ../images/icons/clock.png );
+}
+ 
+.r-icon-edit {
+  background-image: url( ../images/icons/edit.png );
+}
+ 
+.r-icon-find {
+  background-image: url( ../images/icons/find.png );
+}
+ 
+.r-icon-check {
+  background-image: url( ../images/icons/check.png );
+}
+ 
+.r-icon-cancel {
+  background-image: url( ../images/icons/cancel.png );
+}
+ 
+.r-icon-requeue {
+  background-image: url( ../images/icons/arrow_redo.png );
+}
+ 
+.r-grid-page-prev {
+  background-image: url( ../images/icons/arrow_head_left.png );
+}
+ 
+.r-grid-page-prev-disabled {
+  background-image: url( ../images/icons/empty.png );
+}
+ 
+.r-grid-page-next {
+  background-image: url( ../images/icons/arrow_head_right.png );
+}
+ 
+.r-grid-page-next-disabled {
+  background-image: url( ../images/icons/empty.png );
+}
+ 
+.r-grid-sort-descending {
+  background-image: url( ../images/icons/arrow_down.gif );
+  padding: 0 0 0 8px;
+}
+ 
+.r-grid-sort-ascending {
+  background-image: url( ../images/icons/arrow_up.gif );
+  padding: 0 0 0 8px;
+}
+ 
+.r-icon-open {
+  background-image: url( ../images/icons/arrow_head_down.png );
+}
+ 
+.r-icon-close {
+  background-image: url( ../images/icons/arrow_head_right.png );
+}
+ 
+.r-icon-cross {
+  background-image: url( ../images/icons/cross.png );
+}
+ 
+.maximize, table.yui-dt-table {
+  width: 100%;
+}
+ 
+button {
+  margin: 1px;
+}
+ 
+fieldset {
+  border: 1px solid #808080;
+}
+ 
+input, textarea, select {
+  font-size: 12px;
+}
+ 
+input.r-text-help {
+  color: gray;
+}
+ 
+.r-error-field {
+  background-color: #00FA9A;
+}
+ 
+.r-page {
+  margin: 2px 0;
+  padding: 5px 0;
+  width: 100%;
+}
+ 
+.r-page-number, .r-page-prev, .r-page-next {
+  padding: 1px 4px 3px 4px;
+  margin: 0 5px;
+  background-color: transparent;
+  background-image: url( ../images/bg_grey.png );
+  background-repeat: repeat-x;
+  background-attachment: scroll;
+  cursor: pointer;
+  border: 1px solid #808080;
+}
+ 
+ul.r-tabs {
+  margin: 4px 0 0 0;
+  padding: 3px 0;
+  border-bottom: 1px solid #778;
+}
+ 
+ul.r-tabs li {
+  list-style: none;
+  margin: 0;
+  display: inline;
+}
+ 
+ul.r-tabs li a {
+  font-style: italic;
+  padding: 3px 0.5em;
+  margin-left: 4px;
+  border: 1px solid #778;
+  border-bottom: none;
+  text-decoration: none;
+  outline: none;
+  color: #15428B;
+  background-color: transparent;
+  background-image: url( ../images/bg_grey.png );
+  background-repeat: repeat-x;
+  background-attachment: scroll;
+}
+ 
+ul.r-tabs li a.info {
+  font-style: normal;
+}
+ 
+ul.r-tabs li a:hover {
+  background: #AAE;
+}
+ 
+ul.r-tabs li a.active {
+  border-bottom: 1px solid #fff;
+  background: #fff;
+}
+ 
+ul.r-tabs li a:hover {
+  background: white;
+}
+ 
+#appname {
+  font-weight: bold;
+  font-style: normal;
+  font-variant: small-caps;
+  letter-spacing: 2px;
+  color: #15428b;
+}
+ 
+/*
+* Part of workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=167801
+*/
+.caretfix {
+  overflow: auto;
+}
+ 
+table.r-info {
+  border: 1px solid gray;
+  background-color: #fff;
+}
+ 
+table.r-info th {
+  border: 1px solid gray;
+  font-weight: normal;
+  background-color: transparent;
+  background-image: url( ../images/bg_grey.png );
+  background-repeat: repeat-x;
+  padding: 4px 3px
+}
+ 
+table.r-info td {
+  padding: 4px 3px
+}
+ 
+table.r-info td.label {
+  font-weight: bold;
+  white-space: nowrap;
+  padding-right: 6px;
+}
+ 
+table.r-grid {
+  border: 1px solid gray;
+  border-collapse: collapse;
+  background-color: #fff;
+  margin: 0 0 5px 0;
+  padding: 0;
+  width: 100%;
+  font-weight: normal;
+ 
+}
+ 
+.r-grid-scroll-container {
+  border: 1px solid gray;
+}
+ 
+/*Can't put border on table because this will cause scrolling header leakage in ie when using scrolling javascript. */
+.r-grid-scroll-container table.r-grid {
+  border-width: 0;
+}
+ 
+table.r-grid thead {
+  background-color: white;
+  font-weight: normal;
+}
+ 
+table.r-grid th {
+  font-weight: normal;
+}
+ 
+table.r-grid tr.column-heading th {
+  border: 1px solid gray; /** Placing border on th because table can't have border on table **/
+  font-weight: normal;
+  background-color: transparent;
+  background-image: url( ../images/bg_grey.png );
+  background-repeat: repeat-x;
+  padding: 4px;
+}
+ 
+table.r-grid th.first {
+  border-left: 0;
+}
+ 
+table.r-grid tbody td {
+  padding: 4px;
+}
+ 
+table.r-grid tr.even {
+  background-color: #fff;
+}
+ 
+table.r-grid tr.odd {
+  background-color: #F5F5F5;
+}
+ 
+table.r-grid tr.highlight {
+  background-color: #B2D2FF;
+}
+ 
+table.r-grid tr.selected {
+  background-color: #426FD9;
+  color: #fff;
+}
+ 
+table.r-grid tr.selected a {
+  color: #fff;
+}
+ 
+table.r-grid tfoot td {
+  border: 1px solid gray;
+  font-weight: normal;
+  background-color: transparent;
+  background-image: url( ../images/bg_grey.png );
+  background-repeat: repeat-x;
+  padding: 4px;
+}
+ 
+table.r-grid tr.paging div {
+  position: relative;
+}
+ 
+.r-grid-total-records {
+  display: block;
+  position: absolute;
+  right: 5px;
+  top: 1px;
+}
+ 
+.r-grid-added-records {
+  display: block;
+  position: absolute;
+  right: 450px;
+  top: 1px;
+}
+ 
+.r-grid-edited-records {
+  display: block;
+  position: absolute;
+  right: 300px;
+  top: 1px;
+}
+ 
+.r-grid-deleted-records {
+  display: block;
+  position: absolute;
+  right: 150px;
+  top: 1px;
+}
+ 
+.r-grid-page-of {
+  border-left: 1px solid #9AC6FF;
+  border-right: 1px solid #9AC6FF;
+  padding: 0 5px;
+}
+ 
+.r-grid-page-prev {
+  margin: 0;
+  text-decoration: none;
+}
+ 
+.r-grid-page-next {
+  margin: 0;
+  text-decoration: none;
+}
+ 
+.wwFormTable {
+  margin: 2px;
+}
+ 
+table.wwFormTable td, table.wwFormTable th {
+  padding: 2px;
+  margin: 1px;
+  vertical-align: middle;
+}
+ 
+.wwFormTable td.tdLabel {
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+ 
+.wwFormTable th {
+  font-weight: bold;
+}
+ 
+.wwFormTable label {
+  font-weight: normal;
+}
+ 
+#articleScrollContent {
+  position: relative;
+}
+ 
+#article-content {
+  padding: 3px;
+  font-size:12px;
+}
+ 
+.article-header {
+  padding: 3px 3px 4px 3px;
+  border-bottom: 1px solid #808080;
+  position: relative;
+  margin-bottom: 4px;
+}
+ 
+.article-header p {
+  padding: 0;
+  margin: 0;
+}
+ 
+.article-body p {
+  margin: 2px 0;
+  line-height: 15px;
+}
+ 
+.article-header div {
+  padding: 2px 0;
+}
+ 
+#doc-logo {
+  position: absolute;
+  right: 20px;
+  top: 1px;
+}
+ 
+#article-headline {
+  font-weight: bold;
+}
+ 
+#article-copyright {
+  padding-top: 5px;
+  font-size: 90%;
+}
+ 
+.article-fixed {
+  white-space: pre;
+  font-family: lucida, monospace
+}
+ 
+.article-selected-entity {
+  padding: 0 1px;
+  border: 1px solid gray;
+  background-color: #E0E0E0;
+}
+ 
+#entity-viewer {
+  font-size: 12px;
+}
+ 
+#entity-viewer table {
+  width: 100%;
+}
+ 
+#entity-viewer td {
+  padding: 3px;
+}
+ 
+#entity-viewer td.label {
+  width: 150px;
+  vertical-align: top;
+  text-align: right;
+  font-weight: bold;
+}
+ 
+#ev-entity-info {
+  padding-bottom: 3px;
+  margin-bottom: 3px;
+}
+ 
+#entity-viewer ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: square;
+}
+ 
+#entity-viewer li {
+  padding: 1px;
+  margin-left: 15px;
+}
+ 
+#entity-viewer .header {
+  border-bottom: 1px solid #808080;
+  padding-bottom: 2px;
+  font-size: 12px;
+  font-weight: bold;
+}
+ 
+.ev-event-category, .ev-event-sub-category {
+  cursor: help;
+  text-decoration: underline;
+}
+ 
+
+#r-menu h6 {
+  font-size: 100%;
+}
+
+.wwFormTable td.tdLabel {
+  text-align: right !important;
+}
+
+table.summary {
+  border: solid 1px #cccccc;
+  padding: 2px;
+}
+
+table.summary th {
+  background-color: lightgray;
+  border: solid 1px #cccccc;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: top;
+  padding: 2px;
+}
+
+table.summary td {
+  text-align: center;
+  padding: 2px;
+}
+
+table.summary td.label {
+  border-left: none;
+}
+
+table.summary tr.alt {
+  background-color: #fff;
+}
+
+table.tight-table {
+  text-align: left;
+}
+
+table.tight-table>tbody>tr>td {
+  margin: 2px;
+  padding: 2px;
+}
+
+#inquiry_details td {
+  padding: 3.5px;
+}
+
+#inquiry_status td {
+  padding: 3.5px;
+}
+
+.sectionHeader {
+  padding: 3px;
+  font-weight: bold;
+}
+
+.r-grid td {
+  vertical-align: top
+}
+
+.r-grid ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: square;
+}
+
+.r-grid li {
+  padding: 1px;
+  margin-left: 15px;
+}
+
+ul.action-list {
+  margin-left: 3px;
+  text-align: left;
+  list-style-type: none;
+
+}
+
+ul.action-list li {
+  margin-left: 0;
+}
+
+ul.action-list li.alt {
+  background-color: #fff;
+}
+
+.action-button {
+  border: 1px solid #808080
+}
+
+.action-bar {
+  padding: 3px;
+  border-top: 1px solid #808080;
+  background-color: #ECECEC;
+  margin: 0
+}
+
+span.address-label {
+  color: gray;
+}
+
+.nav_tabs span {
+  margin: 5px;
+  color: #004B91;
+}
+
+.nav_tabs a {
+  color: gray;
+  font-weight: normal;
+  margin: 5px;
+  text-decoration: none;
+}
+
+.nav_tabs a.active:link, .nav_tabs a.active, .nav_tabs a.active:visited, .nav_tabs a:hover {
+  border-bottom: 4px solid #004B91 !important;
+  padding-bottom: 2px;
+  color: #004B91;
+}
+
+
+.autocomplete-w1 { background:url(../images/shadow.png) no-repeat bottom right; position:absolute; top:4px; left:3px; /* IE6 fix: */ _background:none; _top:1px; }
+.autocomplete { width:300px; border:1px solid #999; background:#FFF; cursor:default; text-align:left; max-height:350px; overflow:auto; margin:-6px 6px 6px -6px; /* IE specific: */ _height:350px;  _margin:0px 6px 6px 0; overflow-x:hidden; }
+.autocomplete .selected { background:#F0F0F0; }
+.autocomplete div { padding:2px 5px; white-space:nowrap; }
+.autocomplete strong { font-weight:normal; color:#3399FF; }
+

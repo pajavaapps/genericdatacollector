@@ -16,7 +16,7 @@ public class GenericDataFactory {
 			String csvLine) {
 		if (dataType == DataType.GPS) {
 			return new GPS(csvLine);
-		} else if (dataType == DataType.GPS) {
+		} else if (dataType == DataType.GFORCE) {
 			return new GForce(csvLine);
 		} 
 		else if (dataType == DataType.GENERIC) {

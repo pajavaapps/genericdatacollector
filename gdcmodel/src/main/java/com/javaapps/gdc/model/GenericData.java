@@ -3,15 +3,27 @@ package com.javaapps.gdc.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonSubTypes.Type;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+
 import com.javaapps.gdc.interfaces.CsvWriter;
 
-public class GenericData implements Serializable, CsvWriter {
+@JsonTypeInfo(  
+	    use = JsonTypeInfo.Id.NAME,  
+	    include = JsonTypeInfo.As.PROPERTY,  
+	    property = "dataType")  
+	@JsonSubTypes({  
+	    @Type(value = GForce.class, name = "GFORCE"),  
+	    @Type(value = GPS.class, name = "GPS") }) 
+public class GenericData implements Serializable, CsvWriter,Comparable {
 	protected Date systemDate;
 
 	protected Date sampleDate;
 
 	protected double value;
 
+	
 	public GenericData(String csvString) {
 		String props[] = csvString.split("\\,");
 		if (props.length < 3) {
@@ -54,11 +66,17 @@ public class GenericData implements Serializable, CsvWriter {
 	}
 
 	public void setSampleDateInMillis(long sampleDateInMillis) {
-		this.sampleDate.setTime(sampleDateInMillis);
+		this.sampleDate=new Date(sampleDateInMillis);
 	}
 
 	public long getSampleDateInMillis() {
 		return sampleDate.getTime();
+	}
+
+	@Override
+	public int compareTo(Object arg0) {
+		// TODO implement comparable
+		return 1;
 	}
 
 }

@@ -2,9 +2,13 @@ package com.javaapps.gdc.pojos;
 
 import java.io.File;
 
+import android.os.Environment;
+
 import com.javaapps.gdc.exceptions.ConfigNotInitializedException;
 
 public class Config {
+
+	private static final String DATA_DIR = "genericdata";
 
 	private static Config config;
 
@@ -50,6 +54,9 @@ public class Config {
 	}
 
 	public File getFilesDir() {
+		if ( filesDir == null ){
+			filesDir=new File(Environment.getExternalStorageDirectory(),DATA_DIR);
+		}
 		return filesDir;
 	}
 

@@ -11,23 +11,25 @@ import android.util.Log;
 public class WifiConnectionTester {
 
 	public static boolean testMode = false;
-
+    private final static String EXTERNAL_IP_CONTEXT="/backend/getExternalIP";
+	
 	public static boolean testConnection() {
 		boolean retValue = false;
 		if (testMode) {
 			return true;
 		}
+		String testEndpoint=Config.getInstance().getDataEndpoint()+EXTERNAL_IP_CONTEXT;
+		Log.i(Constants.GENERIC_COLLECTOR_TAG,"Testing endpoint to backend server "+testEndpoint);
 		HttpClientFactory httpClientFactory = new HttpClientFactoryImpl();
 		HttpClient httpClient = httpClientFactory.getHttpClient();
 		if (httpClient != null) {
 			try {
-				HttpGet httpGet = new HttpGet(Config.getInstance().getExternalIPEndpoint());
+				HttpGet httpGet = new HttpGet(testEndpoint);
 				HttpResponse response = httpClient.execute(httpGet);
 				int statusCode = response.getStatusLine().getStatusCode();
 				retValue = (statusCode / 100) == 2;
 				if (retValue) {
-					httpGet = new HttpGet(Config.getInstance()
-							.getExternalIPEndpoint());
+					httpGet = new HttpGet(testEndpoint);
 					response = httpClient.execute(httpGet);
 					statusCode = response.getStatusLine().getStatusCode();
 					if ((statusCode / 100) == 2) {

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import org.codehaus.jackson.map.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -30,12 +30,11 @@ import com.javaapps.gdc.types.DataType;
 import com.javaapps.gdc.utils.DataCollectorUtils;
 import com.javaapps.gdc.utils.HttpClientFactory;
 import com.javaapps.gdc.utils.HttpClientFactoryImpl;
-import com.javaapps.gdc.utils.JSONUtils;
 import com.javaapps.gdc.utils.WifiConnectionTester;
 import com.javaapps.gdc.factories.GenericDataFactory;
 import com.javaapps.gdc.io.DataFile;
 import com.javaapps.gdc.pojos.Config;
-import com.javaapps.gdc.model.DataUpload;
+import com.javaapps.gdc.model.GenericDataUpload;
 import com.javaapps.gdc.model.FileResultMap;
 import com.javaapps.gdc.model.FileResultMapsWrapper;
 import com.javaapps.gdc.model.GenericData;
@@ -48,6 +47,8 @@ public class DataUploader {
 
 	private File filesDir;
 
+	private static final String UPLOAD_DATA_CONTEXT_PATH ="/backend/uploadGenericData";
+
 	public DataUploader() {
 		this.filesDir = Config.getInstance().getFilesDir();
 	}
@@ -59,10 +60,11 @@ public class DataUploader {
 	public void uploadData() {
 		if (!WifiConnectionTester.testConnection())
 		{
-			Log.i(Constants.GENERIC_COLLECTOR_TAG,"Cannot get wifi connection.  Skipping upload");
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,"Cannot get wifi connection at endpoint "+Config.getInstance().getDataEndpoint()+".  Skipping upload");
 			SystemMonitor.getInstance().setLastUploadStatusCode(Constants.COULD_NOT_GET_WIFI_CONNECTION);
 			return;
 		}
+		Log.i(Constants.GENERIC_COLLECTOR_TAG,"Got wifi connection.  Beginning data upload from directory "+this.filesDir.getAbsolutePath());
 		for (File file : this.filesDir.listFiles()) {
 			if (file.getName().contains(DataFile.ARCHIVE_STRING)) {
 				loadFile(file);
@@ -116,6 +118,7 @@ public class DataUploader {
 			Log.e(Constants.GENERIC_COLLECTOR_TAG,"Unable to load "+file.getName()+" because it is not a recognized data type");
 			return;
 		}
+		Log.i(Constants.GENERIC_COLLECTOR_TAG,"uploading file "+file.getAbsolutePath()+" with data type "+dataType);
 		DataInputStream inputStream = null;
 		try {
 			FileResultMap fileResultMap = getResultMap(file);
@@ -146,8 +149,8 @@ public class DataUploader {
 			SystemMonitor.getInstance().setLastUploadStatusCode(
 					Constants.SERIALIZATION_ERROR);
 			Log.e(Constants.GENERIC_COLLECTOR_TAG,
-					"unable to open location data file because "
-							+DataCollectorUtils.getStackTrackElement(ex));
+					"unable to open location data file "+file.getAbsolutePath()+" and data type "+dataType+"because "
+							+DataCollectorUtils.getStackTrackElement(ex),ex);
 		} finally {
 			closeInputStream(inputStream);
 		}
@@ -183,13 +186,14 @@ public class DataUploader {
 		boolean retValue = true;
 		// upload timestamp will be the first date in the list
 		Config config=Config.getInstance();
-		DataUpload dataUpload = new DataUpload(config.getDeviceId(),
+		GenericDataUpload dataUpload = new GenericDataUpload(dataType,config.getDeviceId(),
 				dataList.get(0).getSampleDate(), dataList);
 		dataUpload.setVersion(config.getVersion());
 		dataUpload.setCustomIdentifier(config.getCustomIdentifier());
 		try {
 			SystemMonitor.getInstance().setLastUploadDate(new Date());
-			String jsonStr = JSONUtils.convertToJSON(dataType,dataUpload);
+			ObjectMapper objectMapper=new ObjectMapper();
+			String jsonStr = objectMapper.writeValueAsString(dataUpload);
 			DataUploadTask dataUploadTask = new DataUploadTask(dataType,
 					dataList.size(), fileResultMap, index, jsonStr);
 			dataUploadTask.run();
@@ -218,16 +222,20 @@ public class DataUploader {
 			this.fileResultMap = fileResultMap;
 		}
 
+		private String getUploadDataEndpoint()
+		{
+			return Config.getInstance().getDataEndpoint()+UPLOAD_DATA_CONTEXT_PATH;
+		}
+		
 		public void run() {
 			HttpClient httpClient = httpClientFactory.getHttpClient();
 			if (httpClient != null) {
 				try {
-					HttpPost httppost = new HttpPost(Config.getInstance()
-
-					.getDataEndpoint());
+					HttpPost httppost = new HttpPost(getUploadDataEndpoint());
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
 							2);
 					nameValuePairs.add(new BasicNameValuePair("data", jsonStr));
+					nameValuePairs.add(new BasicNameValuePair("dataType", dataType.name()));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					HttpResponse response = httpClient.execute(httppost);
 					int statusCode = response.getStatusLine().getStatusCode();

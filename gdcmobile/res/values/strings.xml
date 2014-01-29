@@ -7,4 +7,18 @@
 <string name="active">Active</string>
 <string name="configure">Configure</string>
 <string name="scan_bluetooth">Scan Bluetooth</string>
+<string name="description">Description</string>
+<string name="save">Save</string>
+<string name="sampling_period">Sampling Period(milli secs)</string>
+<string name="aggregation_period">Aggregation Period(milli secs)</string>
+<string name="conversion_factor">Conversion Factor</string>
+<string name="cancel">Cancel</string>
+<string name="delete">Delete</string>
+<string name="email">Email</string>
+<string name="dataEndpoint">Server URL</string>
+<string name="deviceName">DeviceName</string>
+<string name="configurationExplanation">We need your email address to create an account in the backend server.  It is also necessary to communicate 
+the URL of the server where the data will be stored.  Dont change the server URL unless you have a server
+that can handle data uploads coming from the device</string>
 </resources>
+

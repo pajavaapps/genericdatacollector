@@ -23,21 +23,19 @@ public class LaunchAllReceiver extends BroadcastReceiver {
 
 	private static String GENERIC_DATA_INTENT = "genericDataIntent";
 	private static final long TEN_MINUTES = 1000 * 60 * 10;
-	private Config config = Config.getInstance();
 
 	@Override
 	public void onReceive(Context context, Intent i) {
 		Log.i(Constants.GENERIC_COLLECTOR_TAG,
 				"LaunchAllReceiver received intent " + i.getAction());
+		DBAdapter dbAdapter = new DBAdapter(context);
 		try {
-			DBAdapter dbAdapter = new DBAdapter(context);
 			dbAdapter.open();
 			DeviceMetaData deviceMetaData=dbAdapter.getDeviceMetaData();
-			/*Config.getInstance().setVersion(android.os.Build.VERSION.SDK_INT);
-			String deviceId = Secure.getString(context.getContentResolver(),
-					Secure.ANDROID_ID);
-			config.setDeviceId(deviceMetaData.getDeviceId());*/
-			dbAdapter.close();			
+			if ( deviceMetaData == null){
+				return;
+			}
+			Config.setConfigInstance(deviceMetaData);
 			scheduleFileUploads(context);
 			Intent startCollectingIntent = new Intent();
 			startCollectingIntent.setAction(DataCollectorReceiver.COLLECT_GENERIC_DATA);
@@ -46,6 +44,8 @@ public class LaunchAllReceiver extends BroadcastReceiver {
 			Log.e(Constants.GENERIC_COLLECTOR_TAG,
 					"Could not find custom identifier in DB becuase "
 							+ DataCollectorUtils.getStackTrackElement(ex));
+		}finally{
+			dbAdapter.close();			
 		}
 	}
 

@@ -18,6 +18,7 @@ import com.javaapps.gdc.Constants;
 import com.javaapps.gdc.interfaces.CsvWriter;
 import com.javaapps.gdc.model.Monitor;
 import com.javaapps.gdc.model.SystemMonitor;
+import com.javaapps.gdc.pojos.Config;
 import com.javaapps.gdc.pojos.SensorMetaData;
 import com.javaapps.gdc.types.DataType;
 import com.javaapps.gdc.utils.DataCollectorUtils;
@@ -25,7 +26,6 @@ import com.javaapps.gdc.utils.DataCollectorUtils;
 public class DataFile<T> {
 
 	public final static String ARCHIVE_STRING = "_archive_";
-	private static final String DATA_DIR = "genericdata";
 
 	private final ReentrantLock lock = new ReentrantLock();
 
@@ -35,7 +35,7 @@ public class DataFile<T> {
 
 	public DataFile(SensorMetaData sensorMetaData, String extension)
 			throws FileNotFoundException, IOException {
-		filesDir=new File(Environment.getExternalStorageDirectory(),DATA_DIR);
+		filesDir=Config.getInstance().getFilesDir();
         if ( ! filesDir.exists()){
         	if ( ! filesDir.mkdirs()){
         		Log.e(Constants.GENERIC_COLLECTOR_TAG,"Cannot create sdcard data directory");

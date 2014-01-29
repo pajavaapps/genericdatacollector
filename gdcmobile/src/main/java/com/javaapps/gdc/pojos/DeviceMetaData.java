@@ -3,11 +3,12 @@ public class DeviceMetaData {
 	
 	private String email;
 	private String deviceId;
-	private String customIdentifier;
+	private String customIdentifier="mydevicename";
 	private String dataEndpoint;
 	private int uploadBatchSize=100;
 	
-	
+
+	public final static String DEFAULT_DATA_ENDPOINT="http://genericdataserver.pajavaapps.cloudbees.net/gdcserver";
 	
 	public DeviceMetaData(String email, String deviceId,
 			String customIdentifier,String dataEndpoint) {
@@ -55,6 +56,13 @@ public class DeviceMetaData {
 
 	public void setDataEndpoint(String dataEndpoint) {
 		this.dataEndpoint = dataEndpoint;
+	}
+
+	@Override
+	public String toString() {
+		return "DeviceMetaData [email=" + email + ", deviceId=" + deviceId
+				+ ", customIdentifier=" + customIdentifier + ", dataEndpoint="
+				+ dataEndpoint + ", uploadBatchSize=" + uploadBatchSize + "]";
 	}
 
 	

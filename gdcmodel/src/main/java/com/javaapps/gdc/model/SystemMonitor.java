@@ -8,7 +8,7 @@ import com.javaapps.gdc.types.DataType;
 
 public class SystemMonitor {
 	
-	private Map<DataType, Monitor> monitorMap=new HashMap<DataType, Monitor>();
+	private Map<String, Monitor> monitorMap=new HashMap<String, Monitor>();
 	
 	private static SystemMonitor systemMonitor=new SystemMonitor();
 	
@@ -28,11 +28,11 @@ public class SystemMonitor {
 		return systemMonitor;
 	}
 	
-	public Monitor getMonitor(DataType dataType){
-		Monitor monitor=monitorMap.get(dataType);
+	public Monitor getMonitor(String id){
+		Monitor monitor=monitorMap.get(id);
 		if ( monitor == null ){
 			monitor =new Monitor();
-			monitorMap.put(dataType, monitor);
+			monitorMap.put(id, monitor);
 		}
 		return monitor;
 	}
