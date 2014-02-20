@@ -1,0 +1,9 @@
+{"serviceMetaDataMap":
+{"service1":{"serviceName":"service1","serviceUUID":"00000000-0000-0000-0000-000000001234",
+"characteristicMap":{"char1":
+{"characteristicName":
+"char1","characteristicUUID":"00000000-0000-0000-0000-000000012345","enableCharacteristicUUID":"00000000-0000-0000-0000-000000012346","enableCharactersisticValue":1,"disableCharacteristicValue":2},
+"char2":{"characteristicName":"char2","characteristicUUID":"00000000-0000-0000-0000-000000022345","enableCharacteristicUUID":"00000000-0000-0000-0000-000000022346","enableCharactersisticValue":3,"disableCharacteristicValue":4}}},
+"service2":{"serviceName":"service2","serviceUUID":"00000000-0000-0000-0000-000000002234",
+"characteristicMap":{"char1":
+{"characteristicName":"char1","characteristicUUID":"00000000-0000-0000-0000-000000032345","enableCharacteristicUUID":"00000000-0000-0000-0000-000000033346","enableCharactersisticValue":5,"disableCharacteristicValue":6}}}}}

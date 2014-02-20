@@ -99,4 +99,8 @@ public class Config {
 		this.uploadBatchSize=uploadBatchSize;
 	}
 
+	
+	public String getNormalizedEmail(){
+		return deviceMetaData.getNormalizedEmail();
+	}
 }

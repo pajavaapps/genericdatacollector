@@ -236,6 +236,7 @@ public class DataUploader {
 							2);
 					nameValuePairs.add(new BasicNameValuePair("data", jsonStr));
 					nameValuePairs.add(new BasicNameValuePair("dataType", dataType.name()));
+					nameValuePairs.add(new BasicNameValuePair("normalizedEmail", Config.getInstance().getNormalizedEmail()));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					HttpResponse response = httpClient.execute(httppost);
 					int statusCode = response.getStatusLine().getStatusCode();

@@ -59,20 +59,21 @@ public class GenericDataDAO {
 		dateTimeFormat.setTimeZone(TimeZone.getTimeZone("America/New_York")); 
 	}
 
-	public DeviceCheckinData saveGenericData(DataType dataType,String jsonStr) throws JsonParseException,
+	public DeviceCheckinData saveGenericData(String normalizedEmail,DataType dataType,String jsonStr) throws JsonParseException,
 			JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		GenericDataUpload dataUpload =null;
 			dataUpload = objectMapper.readValue(
 				jsonStr.getBytes(), GenericDataUpload.class);
-		return(saveGenericData(dataUpload));
+		return(saveGenericData(normalizedEmail,dataUpload));
 	}
 
-	public DeviceCheckinData saveGenericData(GenericDataUpload totalDataUpload)
+	public DeviceCheckinData saveGenericData(String normalizedEmail,GenericDataUpload totalDataUpload)
 			throws JsonParseException, JsonMappingException, IOException {
 		String deviceId=(totalDataUpload.getCustomIdentifier()!= null)?totalDataUpload.getCustomIdentifier():totalDataUpload.getDeviceId();
 		logger.info("uploading data from device "+deviceId);
-		DBCollection vehicleCollection = getVehicleDocument(deviceId);
+		DBCollection clientCollection = getClientDocument(normalizedEmail);
+		DBCollection deviceCollection = getDeviceDocument(deviceId,clientCollection);
 		DeviceCheckinData deviceCheckinData=new DeviceCheckinData(totalDataUpload.getDeviceId(),
 				totalDataUpload.getCustomIdentifier(),"TODO",
 				new Date(System.currentTimeMillis()),totalDataUpload.getVersion());
@@ -83,7 +84,7 @@ public class GenericDataDAO {
 		for (GenericDataUpload  genericDataUpload : splitListsByDay(totalDataUpload)) {
 			Date uploadDate = genericDataUpload.getGenericDataList().get(0)
 					.getSampleDate();
-			DBCollection dateCollection = getDailyDocument(genericDataUpload.getDataType(),vehicleCollection,
+			DBCollection dateCollection = getDailyDocument(genericDataUpload.getDataType(),deviceCollection,
 					dateFormat.format(uploadDate));
 			DBCollection minuteCollection = getMinuteDocument(dateCollection,
 					dateTimeFormat.format(uploadDate));
@@ -130,11 +131,11 @@ public class GenericDataDAO {
 	}
 
 
-	public List<GenericData> get(DataType dataType,String deviceId, Date date, int timeGranularity)
+	public List<GenericData> get(String normalizedEmail,DataType dataType,String deviceId, Date date, int timeGranularity)
 			throws JsonParseException, JsonMappingException, IOException {
 		List<GenericData> retList = new ArrayList<GenericData>();
 		ObjectMapper objectMapper = new ObjectMapper();
-		String dailyPrefix = deviceId + "."+dataType.getPrefix()+"_" + dateFormat.format(date);
+		String dailyPrefix = normalizedEmail+"."+deviceId + "."+dataType.getPrefix()+"_" + dateFormat.format(date);
 		for (String collectionName : mongoDb.getCollectionNames()) {
 			if (collectionName.startsWith(dailyPrefix)) {
 				DBCollection dbCollection = mongoDb.getCollection(collectionName);
@@ -187,15 +188,20 @@ public class GenericDataDAO {
 		logger.info("Dropping collection "+coll.getFullName());
 		coll.drop();
 	}
-
-	private DBCollection getVehicleDocument(String deviceId) {
-		DBCollection dbCollection = mongoDb.getCollection(deviceId);
+	
+	private DBCollection getClientDocument(String normalizedEmail) {
+		DBCollection dbCollection = mongoDb.getCollection(normalizedEmail);
 		return dbCollection;
 	}
 
-	private DBCollection getDailyDocument(DataType dataType,DBCollection vehicleCollection,
+	private DBCollection getDeviceDocument(String deviceId,DBCollection clientCollection) {
+		DBCollection dbCollection = clientCollection.getCollection(deviceId);
+		return dbCollection;
+	}
+
+	private DBCollection getDailyDocument(DataType dataType,DBCollection deviceCollection,
 			String dateString) {
-		return vehicleCollection.getCollection(dataType.getPrefix()+"_" + dateString);
+		return deviceCollection.getCollection(dataType.getPrefix()+"_" + dateString);
 	}
 
 	private DBCollection getMinuteDocument(DBCollection dateCollection,

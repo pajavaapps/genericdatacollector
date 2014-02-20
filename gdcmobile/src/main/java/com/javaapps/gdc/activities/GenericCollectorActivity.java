@@ -9,18 +9,26 @@ import com.javaapps.gdc.R;
 import com.javaapps.gdc.db.DBAdapter;
 import com.javaapps.gdc.exceptions.BlueToothNotSupportedException;
 import com.javaapps.gdc.pojos.*;
+import com.javaapps.gdc.probes.AdRecord;
 import com.javaapps.gdc.receivers.DataCollectorReceiver;
 import com.javaapps.gdc.types.DataType;
 
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothAdapter.LeScanCallback;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,7 +47,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class GenericCollectorActivity extends ListActivity {
+public class GenericCollectorActivity extends ListActivity implements
+		LeScanCallback {
 
 	private final static int REQUEST_ENABLE_BT = 1;
 	private static final String LAUNCH_COLLECTOR = "launchCollector";
@@ -48,24 +57,27 @@ public class GenericCollectorActivity extends ListActivity {
 
 	private final BroadcastReceiver bluetoothReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
-			try
-			{
-			String action = intent.getAction();
-			Log.i(Constants.GENERIC_COLLECTOR_TAG, "Received bluetooth intent");
-			// When discovery finds a device
-			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+			try {
+				String action = intent.getAction();
 				Log.i(Constants.GENERIC_COLLECTOR_TAG,
-						"Received bluetooth found intent");
-				// Get the BluetoothDevice object from the Intent
-				BluetoothDevice device = intent
-						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				// Add the name and address to an array adapter to show in a
-				// ListView
-				GenericCollectorActivity.this.addBluetoothDevice(device);
-				Log.i(Constants.GENERIC_COLLECTOR_TAG, "Getting bonded devices");
-			}
-			}catch(Exception ex){
-				Log.e(Constants.GENERIC_COLLECTOR_TAG,"Error receiving bluetooth intent "+ex.getMessage(),ex);
+						"Received bluetooth intent");
+				// When discovery finds a device
+				if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+					Log.i(Constants.GENERIC_COLLECTOR_TAG,
+							"Received bluetooth found intent");
+					// Get the BluetoothDevice object from the Intent
+					BluetoothDevice device = intent
+							.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+					// Add the name and address to an array adapter to show in a
+					// ListView
+					GenericCollectorActivity.this.addBluetoothDevice(device);
+					Log.i(Constants.GENERIC_COLLECTOR_TAG,
+							"Getting bonded devices");
+				}
+			} catch (Exception ex) {
+				Log.e(Constants.GENERIC_COLLECTOR_TAG,
+						"Error receiving bluetooth intent " + ex.getMessage(),
+						ex);
 			}
 		}
 	};
@@ -74,7 +86,7 @@ public class GenericCollectorActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
-			if (! checkForConfiguration()){
+			if (!checkForConfiguration()) {
 				Intent intent = new Intent(this, ConfigurationActivity.class);
 				startActivity(intent);
 				return;
@@ -82,9 +94,9 @@ public class GenericCollectorActivity extends ListActivity {
 			Intent i = new Intent();
 			i.setAction(LAUNCH_COLLECTOR);
 			this.sendBroadcast(i);
-			enableAndScanBluetooth();
 			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 			registerReceiver(bluetoothReceiver, filter);
+			setSensorArrayAdapter();
 		} catch (Exception ex) {
 			String errorStr = "Error initializing GenericCollectorActivity because "
 					+ ex.getMessage();
@@ -92,27 +104,24 @@ public class GenericCollectorActivity extends ListActivity {
 		}
 	}
 
-	
-
 	private boolean checkForConfiguration() {
-		DBAdapter dbAdapter=new DBAdapter(this);
-		try
-		{
-		dbAdapter.open();
-		DeviceMetaData deviceMetaData=dbAdapter.getDeviceMetaData();
-		Log.i(Constants.GENERIC_COLLECTOR_TAG,"Retrieved device meta data "+deviceMetaData);
-		return (deviceMetaData != null);
-		}catch(Exception ex){
-			String errorStr="Cannot retrieve device meta data because "+ex.getMessage();
-			Toast.makeText(this,errorStr, Toast.LENGTH_LONG);
-			Log.e(Constants.GENERIC_COLLECTOR_TAG,errorStr,ex);
+		DBAdapter dbAdapter = new DBAdapter(this);
+		try {
+			dbAdapter.open();
+			DeviceMetaData deviceMetaData = dbAdapter.getDeviceMetaData();
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,
+					"Retrieved device meta data " + deviceMetaData);
+			return (deviceMetaData != null);
+		} catch (Exception ex) {
+			String errorStr = "Cannot retrieve device meta data because "
+					+ ex.getMessage();
+			Toast.makeText(this, errorStr, Toast.LENGTH_LONG);
+			Log.e(Constants.GENERIC_COLLECTOR_TAG, errorStr, ex);
 			return false;
-		}finally{
+		} finally {
 			dbAdapter.close();
 		}
 	}
-
-
 
 	@Override
 	public void onDestroy() {
@@ -125,12 +134,12 @@ public class GenericCollectorActivity extends ListActivity {
 	private boolean addBluetoothDevice(BluetoothDevice device) {
 		boolean retValue = false;
 		try {
- 			dbAdapter = new DBAdapter(this);
+			dbAdapter = new DBAdapter(this);
 			dbAdapter = dbAdapter.open();
 			String deviceId = device.getAddress();
 			SensorMetaData sensorMetaData = dbAdapter
 					.getSensorMetaData(deviceId);
-			Log.i(Constants.GENERIC_COLLECTOR_TAG, "Scanned in device "
+			Log.i(Constants.GENERIC_COLLECTOR_TAG + "2", "Scanned in device "
 					+ device.getName());
 			if (sensorMetaData == null) {
 				sensorMetaData = new SensorMetaData(deviceId, DataType.GENERIC,
@@ -139,12 +148,12 @@ public class GenericCollectorActivity extends ListActivity {
 				sensorMetaData.setId(device.getAddress());
 				dbAdapter.insertSensorMetaData(sensorMetaData);
 				sensorMetaDataList.add(sensorMetaData);
-				Log.i(Constants.GENERIC_COLLECTOR_TAG,
+				Log.i(Constants.GENERIC_COLLECTOR_TAG + "2",
 						"Inserted device into DB " + device);
 				retValue = true;
 			}
 		} catch (Exception ex) {
-			Log.e(Constants.GENERIC_COLLECTOR_TAG,
+			Log.e(Constants.GENERIC_COLLECTOR_TAG + "2",
 					"Could not register bluetooth device " + device.getName()
 							+ "because " + ex.getMessage(), ex);
 		} finally {
@@ -172,19 +181,16 @@ public class GenericCollectorActivity extends ListActivity {
 
 	private void setSensorArrayAdapter() {
 		Log.i(Constants.GENERIC_COLLECTOR_TAG, "Setting sensor array adapter");
-		try
-		{
-		setSensorMetaDataList();
-		SensorViewAdapter adapter = new SensorViewAdapter(this,
-				sensorMetaDataList);
-		this.setListAdapter(adapter);
-		}catch(Exception ex){
-			String errorStr="Cannot set sensor array adapter because "+ex.getMessage();
-			Log.e(Constants.GENERIC_COLLECTOR_TAG,
-					errorStr, ex);
-			Toast.makeText(this,
-					errorStr,
-					Toast.LENGTH_LONG);
+		try {
+			setSensorMetaDataList();
+			SensorViewAdapter adapter = new SensorViewAdapter(this,
+					sensorMetaDataList);
+			this.setListAdapter(adapter);
+		} catch (Exception ex) {
+			String errorStr = "Cannot set sensor array adapter because "
+					+ ex.getMessage();
+			Log.e(Constants.GENERIC_COLLECTOR_TAG, errorStr, ex);
+			Toast.makeText(this, errorStr, Toast.LENGTH_LONG);
 		}
 	}
 
@@ -202,6 +208,7 @@ public class GenericCollectorActivity extends ListActivity {
 		case R.id.scanBluetooth:
 			try {
 				enableAndScanBluetooth();
+				enableAndScanLowEnergyBluetooth();
 			} catch (Exception e) {
 				Log.e(Constants.GENERIC_COLLECTOR_TAG,
 						"Could not scan bluetooth devices because "
@@ -234,9 +241,10 @@ public class GenericCollectorActivity extends ListActivity {
 		}
 	}
 
-	private void enableAndScanBluetooth() throws BlueToothNotSupportedException {
-		BluetoothAdapter bluetoothAdapter = BluetoothAdapter
-				.getDefaultAdapter();
+	private BluetoothAdapter getBluetoothAdapter()
+			throws BlueToothNotSupportedException {
+		BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+		BluetoothAdapter bluetoothAdapter = manager.getAdapter();
 		if (bluetoothAdapter == null) {
 			Log.e(Constants.GENERIC_COLLECTOR_TAG, "blue tooth adapter is null");
 			throw new BlueToothNotSupportedException(
@@ -247,6 +255,31 @@ public class GenericCollectorActivity extends ListActivity {
 					BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		}
+		return bluetoothAdapter;
+	}
+
+	private void enableAndScanLowEnergyBluetooth()
+			throws BlueToothNotSupportedException {
+		BluetoothAdapter bluetoothAdapter = getBluetoothAdapter();
+		if (!getPackageManager().hasSystemFeature(
+				PackageManager.FEATURE_BLUETOOTH_LE)) {
+			Toast.makeText(GenericCollectorActivity.this,
+					"Low energy blue tooth scan not avaible on this device",
+					Toast.LENGTH_LONG);
+			Log.i(Constants.GENERIC_COLLECTOR_TAG + "2",
+					"Feature not enabled to scan in low energy devices");
+			return;
+		}
+		Log.i(Constants.GENERIC_COLLECTOR_TAG + "2",
+				"Scanning in low energy devices");
+		bluetoothAdapter.startLeScan(this);
+		Log.i(Constants.GENERIC_COLLECTOR_TAG + "2", "Started le scan");
+		setSensorArrayAdapter();
+	}
+
+	
+	private void enableAndScanBluetooth() throws BlueToothNotSupportedException {
+		BluetoothAdapter bluetoothAdapter = getBluetoothAdapter();
 		Log.i(Constants.GENERIC_COLLECTOR_TAG,
 				"Starting bluetooth device discovery");
 		bluetoothAdapter.startDiscovery();
@@ -346,8 +379,10 @@ public class GenericCollectorActivity extends ListActivity {
 				} finally {
 					GenericCollectorActivity.this.dbAdapter.close();
 					Intent startCollectingIntent = new Intent();
-					startCollectingIntent.setAction(DataCollectorReceiver.COLLECT_GENERIC_DATA);
-					GenericCollectorActivity.this.sendBroadcast(startCollectingIntent );
+					startCollectingIntent
+							.setAction(DataCollectorReceiver.COLLECT_GENERIC_DATA);
+					GenericCollectorActivity.this
+							.sendBroadcast(startCollectingIntent);
 				}
 			}
 		}
@@ -389,6 +424,24 @@ public class GenericCollectorActivity extends ListActivity {
 			}
 		}
 
+	}
+
+	public void onLeScan(BluetoothDevice bluetoothLEDevice, int rssi,
+			byte[] scanRecord) {
+		Log.i(Constants.GENERIC_COLLECTOR_TAG + "2",
+				"received notification from le device");
+		Log.i(Constants.GENERIC_COLLECTOR_TAG + "2",
+				"Scanned in low energy device " + bluetoothLEDevice + " rssi "
+						+ rssi + " scanRecord " + scanRecord);
+		List<AdRecord> records = AdRecord.parseScanRecord(scanRecord);
+		if (records.size() == 0) {
+			Log.i(Constants.GENERIC_COLLECTOR_TAG + "2", "Scan Record Empty");
+		} else {
+			Log.i(Constants.GENERIC_COLLECTOR_TAG + "2", "Scan Record: "
+					+ TextUtils.join(",", records));
+		}
+		Log.i(Constants.GENERIC_COLLECTOR_TAG + "2", "Finished scanning ad record");
+		addBluetoothDevice(bluetoothLEDevice);
 	}
 
 }

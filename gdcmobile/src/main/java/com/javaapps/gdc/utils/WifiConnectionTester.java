@@ -1,4 +1,5 @@
 package com.javaapps.gdc.utils;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -11,15 +12,17 @@ import android.util.Log;
 public class WifiConnectionTester {
 
 	public static boolean testMode = false;
-    private final static String EXTERNAL_IP_CONTEXT="/backend/getExternalIP";
-	
+	private final static String EXTERNAL_IP_CONTEXT = "/backend/getExternalIP";
+
 	public static boolean testConnection() {
 		boolean retValue = false;
 		if (testMode) {
 			return true;
 		}
-		String testEndpoint=Config.getInstance().getDataEndpoint()+EXTERNAL_IP_CONTEXT;
-		Log.i(Constants.GENERIC_COLLECTOR_TAG,"Testing endpoint to backend server "+testEndpoint);
+		String testEndpoint = Config.getInstance().getDataEndpoint()
+				+ EXTERNAL_IP_CONTEXT;
+		Log.i(Constants.GENERIC_COLLECTOR_TAG ,
+				"Testing endpoint to backend server " + testEndpoint);
 		HttpClientFactory httpClientFactory = new HttpClientFactoryImpl();
 		HttpClient httpClient = httpClientFactory.getHttpClient();
 		if (httpClient != null) {
@@ -27,23 +30,20 @@ public class WifiConnectionTester {
 				HttpGet httpGet = new HttpGet(testEndpoint);
 				HttpResponse response = httpClient.execute(httpGet);
 				int statusCode = response.getStatusLine().getStatusCode();
+				Log.i(Constants.GENERIC_COLLECTOR_TAG , "Got status code "
+						+ statusCode);
 				retValue = (statusCode / 100) == 2;
 				if (retValue) {
-					httpGet = new HttpGet(testEndpoint);
-					response = httpClient.execute(httpGet);
-					statusCode = response.getStatusLine().getStatusCode();
-					if ((statusCode / 100) == 2) {
-						byte[] buffer = new byte[50];
-						response.getEntity().getContent().read(buffer);
-						String responseString = (new String(buffer)).trim();
-						if (responseString.contains("javaapps")) {
-							String ipParts[] = responseString.split("\\,");
-							if (ipParts.length > 2) {
-								Config.getInstance().setExternalIP(
-										ipParts[1] + ":" + ipParts[2]);
-							}
-						} else {
-							retValue = false;
+					byte[] buffer = new byte[50];
+					response.getEntity().getContent().read(buffer);
+					String responseString = (new String(buffer)).trim();
+					Log.i(Constants.GENERIC_COLLECTOR_TAG , "Got response "
+							+ responseString+" with retvalue "+retValue);
+					if (responseString.contains("javaapps")) {
+						String ipParts[] = responseString.split("\\,");
+						if (ipParts.length > 2) {
+							Config.getInstance().setExternalIP(
+									ipParts[1] + ":" + ipParts[2]);
 						}
 					}
 				}
@@ -52,6 +52,7 @@ public class WifiConnectionTester {
 						"Unable to connect to test url");
 			}
 		}
+		Log.i(Constants.GENERIC_COLLECTOR_TAG , "Returning " +retValue);
 		return retValue;
 	}
 }
