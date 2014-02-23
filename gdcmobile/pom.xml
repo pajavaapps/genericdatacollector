@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
-			<version>${platform.version}</version>
+			<version>4.4</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -50,7 +50,7 @@
 			<groupId>com.javaapps.gdc</groupId>
 			<artifactId>gdcmodel</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+	</dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>

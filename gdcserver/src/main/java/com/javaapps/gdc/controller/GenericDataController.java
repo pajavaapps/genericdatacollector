@@ -1,6 +1,7 @@
 package com.javaapps.gdc.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -223,8 +225,22 @@ public class GenericDataController {
 	}
 
 	@RequestMapping(value = "/saveBlueToothMetaData", method = RequestMethod.POST)
-	public void saveBlueToothMetaData(
-			@RequestParam(value = "blueToothMetaData", required = true) BlueToothLEMetaData blueToothMetaData) {
+	public @ResponseBody
+	String saveBlueToothMetaData(
+			@RequestParam(value = "sensorName", required = true) String sensorName,
+			@RequestParam(value = "data", required = true) String blueToothMetaData)
+			throws IOException {
+		logger.info("Blue tooth metadata is  " + blueToothMetaData);
+		File dir = new File("/main/resources/sensorMetaData");
+		if (dir.exists()) {
+			File file = new File(dir, sensorName + ".json");
+			OutputStream fos = new FileOutputStream(file);
+			fos.write(blueToothMetaData.getBytes());
+			fos.close();
+		} else {
+			logger.info("sensor meta data directory does not exist");
+		}
+		return "success";
 	}
 
 	@RequestMapping(value = "/blueToothEntry", method = RequestMethod.GET)

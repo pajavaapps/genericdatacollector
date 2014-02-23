@@ -8,7 +8,7 @@
 "characteristicName":"Humidity",
 "characteristicUUID":"f000aa21-0451-4000-b000-000000000000",
 "enableCharacteristicUUID":"f000aa22-0451-4000-b000-000000000000",
-"enableCharactersisticValue":1,
+"enableCharacteristicValue":1,
 "disableCharacteristicValue":0
 }
 }
@@ -21,7 +21,7 @@
 "characteristicName":"Barometer",
 "characteristicUUID":"f000aa41-0451-4000-b000-000000000000",
 "enableCharacteristicUUID":"f000aa42-0451-4000-b000-000000000000",
-"enableCharactersisticValue":1,
+"enableCharacteristicValue":1,
 "disableCharacteristicValue":0
 }
 }

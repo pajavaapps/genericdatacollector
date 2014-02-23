@@ -10,7 +10,7 @@ public class BlueToothLECharacteristic {
 
 	private UUID enableCharacteristicUUID;
 
-	private int enableCharactersisticValue;
+	private int enableCharacteristicValue;
 
 	private int disableCharacteristicValue = 0;
 	
@@ -29,8 +29,8 @@ public class BlueToothLECharacteristic {
 		return enableCharacteristicUUID;
 	}
 
-	public int getEnableCharactersisticValue() {
-		return enableCharactersisticValue;
+	public int getEnableCharacteristicValue() {
+		return enableCharacteristicValue;
 	}
 
 	public int getDisableCharacteristicValue() {
@@ -39,11 +39,11 @@ public class BlueToothLECharacteristic {
 
 	public BlueToothLECharacteristic(String characteristicName,
 			UUID characteristicUUID, UUID enableCharacteristicUUID,
-			int enableCharactersisticValue) {
+			int enableCharacteristicValue) {
 		this.characteristicName = characteristicName;
 		this.characteristicUUID = characteristicUUID;
 		this.enableCharacteristicUUID = enableCharacteristicUUID;
-		this.enableCharactersisticValue = enableCharactersisticValue;
+		this.enableCharacteristicValue = enableCharacteristicValue;
 	}
 
 	public BlueToothLECharacteristic(String characteristicName,
@@ -60,7 +60,7 @@ public class BlueToothLECharacteristic {
 				+ characteristicName + ", characteristicUUID="
 				+ characteristicUUID + ", enableCharacteristicUUID="
 				+ enableCharacteristicUUID + ", enableCharactersisticValue="
-				+ enableCharactersisticValue + ", disableCharacteristicValue="
+				+ enableCharacteristicValue + ", disableCharacteristicValue="
 				+ disableCharacteristicValue + "]";
 	}
 	

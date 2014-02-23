@@ -35,17 +35,17 @@ public class BlueToothLEMetaDataTest {
         BlueToothLECharacteristic char1=facade.getBlueToothLECharacteristic("service1", "char1");
         assertEquals("00000000-0000-0000-0000-000000012345",char1.getCharacteristicUUID().toString());
         assertEquals("00000000-0000-0000-0000-000000012346",char1.getEnableCharacteristicUUID().toString());
-        assertEquals(1,char1.getEnableCharactersisticValue());
+        assertEquals(1,char1.getEnableCharacteristicValue());
         assertEquals(2,char1.getDisableCharacteristicValue());
         BlueToothLECharacteristic char2=facade.getBlueToothLECharacteristic("service1", "char2");
         assertEquals("00000000-0000-0000-0000-000000022345",char2.getCharacteristicUUID().toString());
         assertEquals("00000000-0000-0000-0000-000000022346",char2.getEnableCharacteristicUUID().toString());
-        assertEquals(3,char2.getEnableCharactersisticValue());
+        assertEquals(3,char2.getEnableCharacteristicValue());
         assertEquals(4,char2.getDisableCharacteristicValue());
         BlueToothLECharacteristic char3=facade.getBlueToothLECharacteristic("service2", "char1");
         assertEquals("00000000-0000-0000-0000-000000032345",char3.getCharacteristicUUID().toString());
         assertEquals("00000000-0000-0000-0000-000000033346",char3.getEnableCharacteristicUUID().toString());
-        assertEquals(5,char3.getEnableCharactersisticValue());
+        assertEquals(5,char3.getEnableCharacteristicValue());
         assertEquals(6,char3.getDisableCharacteristicValue());
         
         ObjectMapper objectMapper=new ObjectMapper();
@@ -58,17 +58,17 @@ public class BlueToothLEMetaDataTest {
         char1=facade.getBlueToothLECharacteristic("service1", "char1");
         assertEquals("00000000-0000-0000-0000-000000012345",char1.getCharacteristicUUID().toString());
         assertEquals("00000000-0000-0000-0000-000000012346",char1.getEnableCharacteristicUUID().toString());
-        assertEquals(1,char1.getEnableCharactersisticValue());
+        assertEquals(1,char1.getEnableCharacteristicValue());
         assertEquals(2,char1.getDisableCharacteristicValue());
         char2=facade.getBlueToothLECharacteristic("service1", "char2");
         assertEquals("00000000-0000-0000-0000-000000022345",char2.getCharacteristicUUID().toString());
         assertEquals("00000000-0000-0000-0000-000000022346",char2.getEnableCharacteristicUUID().toString());
-        assertEquals(3,char2.getEnableCharactersisticValue());
+        assertEquals(3,char2.getEnableCharacteristicValue());
         assertEquals(4,char2.getDisableCharacteristicValue());
         char3=facade.getBlueToothLECharacteristic("service2", "char1");
         assertEquals("00000000-0000-0000-0000-000000032345",char3.getCharacteristicUUID().toString());
         assertEquals("00000000-0000-0000-0000-000000033346",char3.getEnableCharacteristicUUID().toString());
-        assertEquals(5,char3.getEnableCharactersisticValue());
+        assertEquals(5,char3.getEnableCharacteristicValue());
         assertEquals(6,char3.getDisableCharacteristicValue());
         System.out.println(jsonStr);
  		}catch(Exception ex){
@@ -89,17 +89,17 @@ public class BlueToothLEMetaDataTest {
         BlueToothLECharacteristic char1=facade.getBlueToothLECharacteristic("service1", "char1");
         assertEquals("00000000-0000-0000-0000-000000012345",char1.getCharacteristicUUID().toString());
         assertEquals("00000000-0000-0000-0000-000000012346",char1.getEnableCharacteristicUUID().toString());
-        assertEquals(1,char1.getEnableCharactersisticValue());
+        assertEquals(1,char1.getEnableCharacteristicValue());
         assertEquals(2,char1.getDisableCharacteristicValue());
         BlueToothLECharacteristic char2=facade.getBlueToothLECharacteristic("service1", "char2");
         assertEquals("00000000-0000-0000-0000-000000022345",char2.getCharacteristicUUID().toString());
         assertEquals("00000000-0000-0000-0000-000000022346",char2.getEnableCharacteristicUUID().toString());
-        assertEquals(3,char2.getEnableCharactersisticValue());
+        assertEquals(3,char2.getEnableCharacteristicValue());
         assertEquals(4,char2.getDisableCharacteristicValue());
         BlueToothLECharacteristic char3=facade.getBlueToothLECharacteristic("service2", "char1");
         assertEquals("00000000-0000-0000-0000-000000032345",char3.getCharacteristicUUID().toString());
         assertEquals("00000000-0000-0000-0000-000000033346",char3.getEnableCharacteristicUUID().toString());
-        assertEquals(5,char3.getEnableCharactersisticValue());
+        assertEquals(5,char3.getEnableCharacteristicValue());
         assertEquals(6,char3.getDisableCharacteristicValue());
 		}catch(Exception ex){
 			fail("loadTest failed because "+ex.getMessage());
