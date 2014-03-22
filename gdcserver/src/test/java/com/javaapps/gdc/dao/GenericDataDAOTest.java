@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.javaapps.gdc.dao.GenericDataDAO;
 import com.javaapps.gdc.model.GPS;
+import com.javaapps.gdc.model.GenericDataInterface;
 import com.javaapps.gdc.model.GenericDataUpload;
 import com.javaapps.gdc.model.GenericWrapper;
 import com.javaapps.gdc.model.GenericData;
@@ -59,7 +60,7 @@ public class GenericDataDAOTest {
 		List<GenericData> genericDataList=genericDataDAO.get(TEST_EMAIL,DataType.GPS,TEST_DEVICE_ID,new Date(),GenericDataDAO.DATE_GRANULARITY);
 		assertNotNull(genericDataList);
 		assertTrue(genericDataList.size()>0);
-		for (GenericData genericData:genericDataList)
+		for (GenericDataInterface genericData:genericDataList)
 		{
 		System.out.println(genericData);
 		}
@@ -123,7 +124,7 @@ public class GenericDataDAOTest {
 		List<GenericData> genericDataList=genericDataDAO.get(TEST_EMAIL,DataType.GPS,TEST_DEVICE_ID,new Date(),GenericDataDAO.DATE_GRANULARITY);
 		assertNotNull(genericDataList);
 		assertTrue(genericDataList.size()>0);
-		for (GenericData genericData:genericDataList)
+		for (GenericDataInterface genericData:genericDataList)
 		{
 		System.out.println(genericData);
 		}
@@ -138,7 +139,6 @@ public class GenericDataDAOTest {
 		{
 			double latitude=40.0+Math.random()*0.0001;
 			double longitude=-80.0+Math.random()*0.0001;
-			GenericData genericData=new GenericData();
 			float speed=40.0f;
 			long sampleDateTime=System.currentTimeMillis();
 			double altitude=20.0;

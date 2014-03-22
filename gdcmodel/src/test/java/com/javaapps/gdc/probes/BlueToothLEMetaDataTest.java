@@ -23,11 +23,11 @@ public class BlueToothLEMetaDataTest {
 		{
 		BlueToothLEMetaData.Builder metaDataBuilder=new BlueToothLEMetaData.Builder();
 		metaDataBuilder.addCharacteristic("service1","00000000-0000-0000-0000-000000001234",
-				"char1","00000000-0000-0000-0000-000000012345","00000000-0000-0000-0000-000000012346",1,2);
+				"char1","00000000-0000-0000-0000-000000012345","00000000-0000-0000-0000-000000012346",1,2,false);
 		metaDataBuilder.addCharacteristic("service1", "00000000-0000-0000-0000-000000001234",
-				"char2","00000000-0000-0000-0000-000000022345","00000000-0000-0000-0000-000000022346",3,4);
+				"char2","00000000-0000-0000-0000-000000022345","00000000-0000-0000-0000-000000022346",3,4,false);
 		metaDataBuilder.addCharacteristic("service2", "00000000-0000-0000-0000-000000002234",
-				"char1","00000000-0000-0000-0000-000000032345","00000000-0000-0000-0000-000000033346",5,6);
+				"char1","00000000-0000-0000-0000-000000032345","00000000-0000-0000-0000-000000033346",5,6,false);
 		BlueToothLEMetaData blueToothLEMetaData=metaDataBuilder.build();
 		BlueToothLEMetaDataFacade facade=new BlueToothLEMetaDataFacade(blueToothLEMetaData);
         assertEquals("00000000-0000-0000-0000-000000001234",facade.getBlueToothLEServiceUUID("service1").toString());

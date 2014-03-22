@@ -142,7 +142,7 @@ public class GenericCollectorActivity extends ListActivity implements
 			Log.i(Constants.GENERIC_COLLECTOR_TAG + "2", "Scanned in device "
 					+ device.getName());
 			if (sensorMetaData == null) {
-				sensorMetaData = new SensorMetaData(deviceId, DataType.GENERIC,
+				sensorMetaData = new SensorMetaData(deviceId, DataType.BLUETOOTH_DATA,
 						"N");
 				sensorMetaData.setDescription(device.getName());
 				sensorMetaData.setId(device.getAddress());
@@ -330,7 +330,7 @@ public class GenericCollectorActivity extends ListActivity implements
 						.findViewById(R.id.delete);
 				deleteButton.setOnClickListener(new SensorDeleteListener(
 						sensorMetaData.get(position)));
-				if (sensorMetaData.get(position).getDataType() != DataType.GENERIC) {
+				if (sensorMetaData.get(position).getDataType() == DataType.GFORCE ||sensorMetaData.get(position).getDataType() == DataType.GPS ) {
 					deleteButton.setVisibility(View.GONE);
 				}
 				if (sensorMetaData.get(position).getActive().equals("Y")) {

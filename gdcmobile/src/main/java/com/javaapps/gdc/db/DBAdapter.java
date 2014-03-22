@@ -38,11 +38,11 @@ public class DBAdapter {
 	private final static String SENSOR_TABLE_CREATE = "create table "
 			+ SENSOR_TABLE
 			+ " ( ID  text not null unique, DATA_TYPE text not null, DATA_SUBTYPE text,SAMPLING_PERIOD integer default 100,DESCRIPTION text,"
-			+ "AGGREGATION_METHOD text default 'SIMPLE', AGGREGATION_PERIOD integer default 1000 ,ACTIVE text not null default 'N',CONVERSION_FACTOR real default 1.0)";
+			+ "AGGREGATION_METHOD text default 'SIMPLE', AGGREGATION_PERIOD integer default 1000 ,ACTIVE text not null default 'N',CONVERSION_FACTOR real default 1.0,SERVICE_STRING text)";
 	private final static String SENSOR_COLUMNS[] = { "ID", "DATA_TYPE",
 			"DATA_SUBTYPE", "SAMPLING_PERIOD", "DESCRIPTION",
 			"AGGREGATION_METHOD", "AGGREGATION_PERIOD", "ACTIVE",
-			"CONVERSION_FACTOR" };
+			"CONVERSION_FACTOR","SERVICE_STRING"};
 	private final static String DEVICE_COLUMNS[] = { "EMAIL", "DEVICE_ID",
 			"CUSTOM_IDENTIFIER","DATA_ENDPOINT","BATCH_UPLOAD_SIZE"};
 	private final static String INSERT_GPS="insert into "+SENSOR_TABLE+ "(ID,DATA_TYPE,ACTIVE,DESCRIPTION) values ('1','GPS','N','GPS Sensor')";
@@ -91,6 +91,7 @@ public class DBAdapter {
 			contentValues.put("CONVERSION_FACTOR",
 					SensorMetaData.DEFAULT_CONVERSION_FACTOR);
 		}
+		contentValues.put("SERVICE_STRING", sensorMetaData.getServiceString());
 		return(contentValues);
 	}
 	
@@ -110,6 +111,10 @@ public class DBAdapter {
 				"ID=?", new String[] { id }, null, null, null, null);
 		if (cursor != null && cursor.moveToFirst()) {
 			sensorMetaData = createSensorMetaData(cursor);
+		}
+		if ( sensorMetaData != null)
+		{
+		sensorMetaData.hydrateServiceString();
 		}
 		return sensorMetaData;
 	}
@@ -133,7 +138,9 @@ public class DBAdapter {
 		Cursor cursor = genericDB.query(SENSOR_TABLE, SENSOR_COLUMNS, null,
 				null, null, null, null, null);
 		while (cursor != null && cursor.moveToNext()) {
-			sensorMetaDataList.add(createSensorMetaData(cursor));
+			SensorMetaData sensorMetaData=createSensorMetaData(cursor);
+			sensorMetaData.hydrateServiceString();
+			sensorMetaDataList.add(sensorMetaData);
 		}
 		return sensorMetaDataList;
 	}
@@ -142,7 +149,7 @@ public class DBAdapter {
 		SensorMetaData sensorMetaData = new SensorMetaData(cursor.getString(0),
 				cursor.getString(1), cursor.getString(2), cursor.getInt(3),
 				cursor.getString(4), cursor.getString(5), cursor.getInt(6),
-				cursor.getString(7), cursor.getDouble(8));
+				cursor.getString(7), cursor.getDouble(8),cursor.getString(9));
 		return sensorMetaData;
 	}
 
@@ -157,8 +164,10 @@ public class DBAdapter {
 		contentValues.put("BATCH_UPLOAD_SIZE",
 				deviceMetaData.getUploadBatchSize());
 		if (getAllDeviceMetaData().size() == 0) {
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,"Inserting device rows");
 			return (genericDB.insert(DEVICE_TABLE, null, contentValues));
 		} else {
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,"Update device row");
 			return (genericDB.update(DEVICE_TABLE, contentValues,null,null));
 		}
 	}
@@ -169,6 +178,8 @@ public class DBAdapter {
 				null, null, null, null, null);
 		if (cursor != null && cursor.moveToFirst()) {
 			deviceMetaData = createDeviceMetaData(cursor);
+		}else{
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,"Cursor has not rows "+cursor);
 		}
 		return deviceMetaData;
 	}
@@ -209,21 +220,36 @@ public class DBAdapter {
 			try {
 				db.execSQL(DEVICE_TABLE_DROP);
 			} catch (Exception ex) {
-
+               Log.e(Constants.GENERIC_COLLECTOR_TAG,"Cannot drop device table because "+ex.getMessage());
 			}
 			try {
 				db.execSQL(SENSOR_TABLE_DROP);
 			} catch (Exception ex) {
-
+	              Log.e(Constants.GENERIC_COLLECTOR_TAG,"Cannot drop sensor table because "+ex.getMessage());
 			}
 		}
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			try
+			{
 			db.execSQL(CONFIG_TABLE_CREATE);
+			}catch(Exception ex){
+				Log.e(Constants.GENERIC_COLLECTOR_TAG,"Could not create config table because "+ex.getMessage());
+			}
+			try
+			{
 			db.execSQL(SENSOR_TABLE_CREATE);
+			}catch(Exception ex){
+				Log.e(Constants.GENERIC_COLLECTOR_TAG,"Could not create senor table because "+ex.getMessage());
+			}
+            try
+            {
 			db.execSQL(INSERT_GPS);
 			db.execSQL(INSERT_GFORCE);
+			}catch(Exception ex){
+				Log.e(Constants.GENERIC_COLLECTOR_TAG,"Could not insert sensor data because "+ex.getMessage());
+			}
 		}
 
 		

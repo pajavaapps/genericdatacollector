@@ -22,7 +22,7 @@ public class ClientMetaDataBuilder {
 				String dataTypeDate=collectionName.substring(lastDotIndex+1);
 				int lastUnderscoreIndex=dataTypeDate.lastIndexOf('_');
 				if ( lastUnderscoreIndex>=0 ){
-					String dataType=dataTypeDate.substring(0,lastUnderscoreIndex);
+					String dataType=dataTypeDate.substring(0,lastUnderscoreIndex).toUpperCase();
 					String dateStr=dataTypeDate.substring(lastUnderscoreIndex+1);
 					MetaData metaData=new MetaData(DataType.valueOf(dataType));
 					System.out.println(dataType+" "+dateStr);

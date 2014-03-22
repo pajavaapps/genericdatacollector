@@ -41,7 +41,7 @@ public class ClientMetaDataBuilderTest {
 			clientMetaDataBuilder.addCollectionName(collectionName);
 		}
 		ClientMetaData clientMetaData=clientMetaDataBuilder.build();
-		assertNotNull(clientMetaData);
+		//assertNotNull(clientMetaData);
 	}
 
 }

@@ -25,17 +25,21 @@ public class DataCollectorReceiver extends BroadcastReceiver {
 	public static final String COLLECT_GENERIC_DATA = "collectGenericData";
 
 	private static Map<String, Probe> probeMap = new HashMap<String, Probe>();
-
+	
+	public static void removeProbe(String sensorMetaDataId){
+		probeMap.remove(sensorMetaDataId);
+	}
+	
 	public void collectData(Context context) {
-		Log.i(Constants.GENERIC_COLLECTOR_TAG, "Collecting data");
+		Log.i(Constants.GENERIC_COLLECTOR_TAG2, "Collecting data");
 		DBAdapter dbAdapter = new DBAdapter(context);
 		dbAdapter.open();
 		List<SensorMetaData> sensorMetaDataList = dbAdapter
 				.getAllSensorMetaData();
 
 		for (SensorMetaData sensorMetaData : sensorMetaDataList) {
-			if (sensorMetaData.getDataType() == DataType.GENERIC) {
-				collectGenericData(context, sensorMetaData);
+			if (sensorMetaData.getDataType() == DataType.BLUETOOTH_DATA) {
+				collectBluetoothData(context, sensorMetaData);
 			} else if (sensorMetaData.getDataType() == DataType.GPS) {
 				collectGPSData(context, sensorMetaData);
 			} else if (sensorMetaData.getDataType() == DataType.GFORCE) {
@@ -76,7 +80,7 @@ public class DataCollectorReceiver extends BroadcastReceiver {
 		}
 	}
 
-	private void collectGenericData(Context context,
+	private void collectBluetoothData(Context context,
 			SensorMetaData sensorMetaData) {
 		try {
 			Log.i(Constants.GENERIC_COLLECTOR_TAG, "Collecting data for "

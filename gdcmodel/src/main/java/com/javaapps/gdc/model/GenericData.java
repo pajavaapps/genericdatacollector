@@ -15,28 +15,15 @@ import com.javaapps.gdc.interfaces.CsvWriter;
 	    property = "dataType")  
 	@JsonSubTypes({  
 	    @Type(value = GForce.class, name = "GFORCE"),  
-	    @Type(value = GPS.class, name = "GPS") }) 
-public class GenericData implements Serializable, CsvWriter,Comparable {
+	    @Type(value = GPS.class, name = "GPS"),
+	    @Type(value = BluetoothData.class, name = "BluetoothData") }) 
+public abstract class GenericData implements GenericDataInterface {
+	
 	protected Date systemDate;
 
 	protected Date sampleDate;
 
-	protected double value;
-
 	
-	public GenericData(String csvString) {
-		String props[] = csvString.split("\\,");
-		if (props.length < 3) {
-			return;
-		}
-		this.sampleDate.setTime(Long.parseLong(props[0]));
-		this.value = Float.parseFloat(props[1]);
-	}
-
-	public GenericData() {
-
-	}
-
 	public Date getSystemDate() {
 		return systemDate;
 	}
@@ -45,6 +32,7 @@ public class GenericData implements Serializable, CsvWriter,Comparable {
 		this.systemDate = systemDate;
 	}
 
+	@Override
 	public Date getSampleDate() {
 		return sampleDate;
 	}
@@ -53,30 +41,24 @@ public class GenericData implements Serializable, CsvWriter,Comparable {
 		this.sampleDate = sampleDate;
 	}
 
-	public double getValue() {
-		return value;
-	}
-
-	public void setValue(double value) {
-		this.value = value;
-	}
-
-	public String toCSV() {
-		return sampleDate.getTime() + "," + value + "\n";
-	}
+	
+	public abstract String toCSV(); 
 
 	public void setSampleDateInMillis(long sampleDateInMillis) {
 		this.sampleDate=new Date(sampleDateInMillis);
 	}
 
+	@Override
 	public long getSampleDateInMillis() {
 		return sampleDate.getTime();
 	}
 
 	@Override
-	public int compareTo(Object arg0) {
-		// TODO implement comparable
-		return 1;
+	public int compareTo(Object object) {
+		GenericData genericData=(GenericData)object;
+		return ((int)(getSampleDateInMillis()-genericData.getSampleDateInMillis()));
 	}
+
+
 
 }

@@ -71,9 +71,10 @@ public class DBAdapterTest extends AndroidTestCase {
 
 	@Test
 	public void test() {
+		String serviceStr="HUMIDITY,f000aa20-0451-4000-b000-000000000000,true\nBAROMETER,f000aa21-0451-4000-b000-000000000000,false\n";
 		SensorMetaData sensorMetaData = new SensorMetaData("id",
 				DataType.GPS.toString(), "dataSubType", 1, "description",
-				AggregationType.SIMPLE.toString(), 2, "Y", 3.0);
+				AggregationType.SIMPLE.toString(), 2, "Y", 3.0,serviceStr);
 		System.out.println(sensorMetaData);
 		assertTrue(dbAdapter.insertSensorMetaData(sensorMetaData) != -1);
 		sensorMetaData = dbAdapter.getSensorMetaData("id");
@@ -89,6 +90,7 @@ public class DBAdapterTest extends AndroidTestCase {
 		assertEquals("Y", sensorMetaData.getActive());
 		assertTrue(dbAdapter.getAllSensorMetaData().size() > 0);
 		assertTrue(dbAdapter.getActiveSensorMetaData().size() > 0);
+		assertTrue(sensorMetaData.getServiceList().size() > 1);
 		
 		sensorMetaData.setActive("N");
 		dbAdapter.updateSensorMetaData(sensorMetaData);

@@ -48,7 +48,7 @@ public class ConfigurationActivity extends Activity {
 			EditText deviceNameView = (EditText) findViewById(R.id.deviceName);
 			deviceNameView.setText(deviceMetaData.getCustomIdentifier());
 		}catch(Exception ex){
-			
+			Log.e(Constants.GENERIC_COLLECTOR_TAG,"Could not setup devicemeta data because "+ex.getMessage());
 		}finally{
 			dbAdapter.close();
 		}

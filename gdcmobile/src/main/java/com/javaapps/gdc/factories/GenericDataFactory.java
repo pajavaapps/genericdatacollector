@@ -5,6 +5,7 @@ import android.location.Location;
 import android.util.Log;
 
 import com.javaapps.gdc.Constants;
+import com.javaapps.gdc.model.BluetoothData;
 import com.javaapps.gdc.model.GForce;
 import com.javaapps.gdc.model.GPS;
 import com.javaapps.gdc.model.GenericData;
@@ -19,9 +20,9 @@ public class GenericDataFactory {
 		} else if (dataType == DataType.GFORCE) {
 			return new GForce(csvLine);
 		} 
-		else if (dataType == DataType.GENERIC) {
-			return new GenericData(csvLine);
-		}
+		else if (dataType == DataType.BLUETOOTH_DATA) {
+			return new BluetoothData(csvLine);
+		} 
 		else {
 			Log.e(Constants.GENERIC_COLLECTOR_TAG, "Unsupported data type");
 			return null;

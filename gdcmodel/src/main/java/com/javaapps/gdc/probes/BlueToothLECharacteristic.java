@@ -1,8 +1,9 @@
 package com.javaapps.gdc.probes;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class BlueToothLECharacteristic {
+public class BlueToothLECharacteristic implements Serializable {
 
 	private String characteristicName;
 
@@ -13,6 +14,8 @@ public class BlueToothLECharacteristic {
 	private int enableCharacteristicValue;
 
 	private int disableCharacteristicValue = 0;
+	
+	private boolean calibration=false;
 	
 	public BlueToothLECharacteristic() {
 	}
@@ -37,6 +40,12 @@ public class BlueToothLECharacteristic {
 		return disableCharacteristicValue;
 	}
 
+	
+	
+	public boolean isCalibration() {
+		return calibration;
+	}
+
 	public BlueToothLECharacteristic(String characteristicName,
 			UUID characteristicUUID, UUID enableCharacteristicUUID,
 			int enableCharacteristicValue) {
@@ -48,10 +57,11 @@ public class BlueToothLECharacteristic {
 
 	public BlueToothLECharacteristic(String characteristicName,
 			UUID characteristicUUID, UUID enableCharacteristicUUID,
-			int enableCharactersisticValue, int disableCharacteristicValue) {
+			int enableCharactersisticValue, int disableCharacteristicValue,boolean calibration) {
 		this(characteristicName, characteristicUUID, enableCharacteristicUUID,
 				enableCharactersisticValue);
 		this.disableCharacteristicValue = disableCharacteristicValue;
+		this.calibration=calibration;
 	}
 
 	@Override
@@ -59,10 +69,12 @@ public class BlueToothLECharacteristic {
 		return "BlueToothLECharacteristic [characteristicName="
 				+ characteristicName + ", characteristicUUID="
 				+ characteristicUUID + ", enableCharacteristicUUID="
-				+ enableCharacteristicUUID + ", enableCharactersisticValue="
+				+ enableCharacteristicUUID + ", enableCharacteristicValue="
 				+ enableCharacteristicValue + ", disableCharacteristicValue="
-				+ disableCharacteristicValue + "]";
+				+ disableCharacteristicValue + ", calibration=" + calibration
+				+ "]";
 	}
+
 	
 	
 

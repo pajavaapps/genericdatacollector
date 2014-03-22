@@ -1,12 +1,13 @@
 package com.javaapps.gdc.probes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class BlueToothLEService {
+public class BlueToothLEService implements Serializable{
 
 	private  String serviceName;
 
@@ -54,10 +55,10 @@ public class BlueToothLEService {
 		private final Map<String, BlueToothLECharacteristic> characteristicMap = new HashMap<String, BlueToothLECharacteristic>();
 
 		public void addCharacteristic(String characteristicName,
-				String characteristicUUIDStr,String enableCharacteristicUUIDStr,int enableCharacteristicValue,int disableCharacteristicValue) {
+				String characteristicUUIDStr,String enableCharacteristicUUIDStr,int enableCharacteristicValue,int disableCharacteristicValue,boolean calibration) {
 			BlueToothLECharacteristic characteristicMetaData = new BlueToothLECharacteristic(
 					characteristicName, UUID.fromString(characteristicUUIDStr),UUID.fromString( enableCharacteristicUUIDStr),
-					enableCharacteristicValue,disableCharacteristicValue);
+					enableCharacteristicValue,disableCharacteristicValue,calibration);
 			characteristicMap.put(characteristicName, characteristicMetaData);
 		}
 

@@ -40,20 +40,18 @@ public class DataUploaderTest {
 	private List<GenericData> locationDataList = new ArrayList<GenericData>();
 	private static File testFileDir = new File("unitTestDir");
 	private static long systemTimeInMillis=System.currentTimeMillis();
-	private ProtocolVersion protocolVersion = new ProtocolVersion("HTTP", 1, 2);
+	private static ProtocolVersion protocolVersion;
 
 	@BeforeClass
 	public static void setupBeforeClass() {
 		WifiConnectionTester.testMode=true;
 		try {
+			 protocolVersion = new ProtocolVersion("HTTP", 1, 2);
 			if (!testFileDir.exists()) {
 				testFileDir.mkdir();
 			}
-            DeviceMetaData deviceMetaData=new DeviceMetaData();
-            deviceMetaData.setDataEndpoint("http://boguswebsite.go");
-			Config.setConfigInstance(deviceMetaData);
-			Config.getInstance().setFilesDir(testFileDir);
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			fail("LocationDataUploaderHandlerTest setup failed because "
 					+ ex.getMessage());
 		}
@@ -66,6 +64,10 @@ public class DataUploaderTest {
 		{
 			file.delete();
 		}
+        DeviceMetaData deviceMetaData=new DeviceMetaData();
+        deviceMetaData.setDataEndpoint("http://boguswebsite.go");
+		Config.setConfigInstance(deviceMetaData);
+		Config.getInstance().setFilesDir(testFileDir);
 		FileResultMapsWrapper.getInstance().getFileResultMaps().clear();
 	}
 

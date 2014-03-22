@@ -24,7 +24,6 @@
 	src="<c:url value="/js/bluetoothentry.js"/>"></script>
 <script type="text/javascript">
 	var SensorMetaData = function(name) {
-		this.name = name;
 		this.serviceMetaDataMap = {};
 	};
 	SensorMetaData.prototype = {
@@ -48,7 +47,7 @@
 					 var ch=service.characteristicMap[key2];
 					 var bluetoothCharacterisitic=new BluetoothCharacteristic (ch.characteristicName,
 							 ch.characteristicUUID,ch.enableCharacteristicUUID,
-							 ch.enableCharacteristicValue, ch.disableCharacteristicValue)
+							 ch.enableCharacteristicValue, ch.disableCharacteristicValue,ch.calibration)
 					 bluetoothService.addCharacteristic(bluetoothCharacterisitic);
 				  }
 			  }
@@ -90,7 +89,7 @@
 							"<input type='button' value='Delete' onclick='deleteService(\""+this.serviceName+"\")'/> &nbsp;&nbsp;"+
 							"<input type='button' value='Edit' onclick='editService(\""+this.serviceName+"\")'/></td></tr>");
 			tableElement
-			.append("<tr><td>Characteristic Name</td><td>UUID</td><td>Enable UUID</td><td>Enable Value</td><td>DisableValue</td><td style='width:20%'>Actions</td></tr>");
+			.append("<tr><td>Characteristic Name</td><td>UUID</td><td>Enable UUID</td><td>Enable Value</td><td>DisableValue</td><td>Is Calibration</td><td style='width:20%'>Actions</td></tr>");
 			div.append(tableElement);
 			 for(var key in this.characteristicMap)
 			  {
@@ -101,12 +100,13 @@
 		}
 	};
 
-	var BluetoothCharacteristic = function(name, uuid,enableUuid,enableValue, disableValue) {
+	var BluetoothCharacteristic = function(name, uuid,enableUuid,enableValue, disableValue,calibration) {
 		this.characteristicName = name;
 		this.characteristicUUID = uuid;
 		this.enableCharacteristicUUID=enableUuid;
 		this.enableCharacteristicValue=enableValue;
 		this.disableCharacteristicValue=disableValue;
+		this.calibration=calibration;
 	};
 	BluetoothCharacteristic.prototype = {
 		display:function(serviceName,tableElement){
@@ -118,6 +118,7 @@
 					+"<td>"+this.enableCharacteristicUUID+"</td>"
 					+"<td>"+this.enableCharacteristicValue+"</td>"
 					+"<td>"+this.disableCharacteristicValue+"</td>"
+					+"<td>"+this.calibration+"</td>"
 					+ "<td  style='width:20%'><input type='button' value='Delete'  onclick='deleteCharacteristic(\""+serviceName+"\",\""+this.characteristicName+"\")'/>"+
 					"&nbsp;&nbsp;<input type='button' value='Edit'  onclick='editCharacteristic(\""+serviceName+"\",\""+this.characteristicName+"\")'/></td></tr>");
 
@@ -178,15 +179,17 @@
 	
 	function saveSensorMetaData()
 	{
-		var data="sensorName="+sensorMetaData.name+"&data="+JSON.stringify(sensorMetaData)
-		 request = $.ajax({
+		var sensorForm=document.getElementById("sensorForm");
+		var data="sensorName="+sensorForm.sensorName.value+"&data="+JSON.stringify(sensorMetaData)
+		//alert (data)
+		request = $.ajax({
 		        url: '<c:url value="/backend/saveBlueToothMetaData"/>',
 		        type: "post",
 		        data: data,
 		        async:false
 		    }).done(function( msg ) {
 		        alert( "Data Saved: " + msg );
-		    });;
+		    });
 	}
 	 
 	function addService(serviceForm) {
@@ -197,7 +200,7 @@
 			var service = new BluetoothService(serviceName, serviceUUID);
 			sensorMetaData.addService(service)
 		}else{
-			service.uuid=serviceUUID;
+			service.serviceUUID=serviceUUID;
 		}
 		var sensorName=sensorForm.sensorName.value;
 		sensorMetaData.display(sensorName,$("#serviceMap"));
@@ -210,10 +213,11 @@
 		var enableCharacteristicUUID = characteristicForm.enableCharacteristicUUID.value;
         var enableValue= characteristicForm.enableValue.value;
         var disableValue= characteristicForm.disableValue.value;
+        var calibration=characteristicForm.calibration.checked;
 		var serviceForm = document.getElementById("serviceForm");
 		service = addService(serviceForm);
 		var characteristic = new BluetoothCharacteristic(characteristicName,
-					characteristicUUID,enableCharacteristicUUID,enableValue,disableValue);
+					characteristicUUID,enableCharacteristicUUID,enableValue,disableValue,calibration,calibration);
 		service.addCharacteristic(characteristic);
 		var sensorName=sensorForm.sensorName.value;
 		sensorMetaData.display(	sensorName,$("#serviceMap"));
@@ -239,12 +243,13 @@
 					onclick="addService(this.form)" /><br />
 			</form>
 			<div style="border: 2px solid blue; margin: 20px; padding: 10px 10px">
-				<form id="charForm" onclick="return false;">
+				<form id="charForm" >
 					Characteristic Name <input type="text" name="characteristicName" size="30" /><br /> 
 				    Characteristic UUID <input type="text" name="characteristicUUID" size="50" /><br />
 				    Enable Characteristic UUID <input type="text" name="enableCharacteristicUUID" size="50" /><br />
 				    Enable Value <input type="text" name="enableValue" size="30" /><br />
 				    Disable Value <input type="text" name="disableValue" size="30" /><br />
+				    Is Calibration Value?  <input type="checkbox"  name="calibration"   /><br />
 					<input	type="button" value="Add Characteristic" onclick="addCharacteristic(this.form)" />
 			</div>
 		</div>

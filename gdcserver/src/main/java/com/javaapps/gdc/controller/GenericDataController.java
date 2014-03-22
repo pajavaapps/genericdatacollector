@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -231,15 +232,13 @@ public class GenericDataController {
 			@RequestParam(value = "data", required = true) String blueToothMetaData)
 			throws IOException {
 		logger.info("Blue tooth metadata is  " + blueToothMetaData);
-		File dir = new File("/main/resources/sensorMetaData");
-		if (dir.exists()) {
-			File file = new File(dir, sensorName + ".json");
-			OutputStream fos = new FileOutputStream(file);
-			fos.write(blueToothMetaData.getBytes());
-			fos.close();
-		} else {
-			logger.info("sensor meta data directory does not exist");
-		}
+		File dir = new File("/tmp/sensorMetaData");
+		dir.mkdirs();
+		File file=new File(dir,sensorName+".json");
+		OutputStream fos = new FileOutputStream(file);
+		fos.write(blueToothMetaData.getBytes());
+		fos.close();
+		BlueToothLEMetaDataManager.remove(sensorName);
 		return "success";
 	}
 
