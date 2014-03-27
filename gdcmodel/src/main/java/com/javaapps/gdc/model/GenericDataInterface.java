@@ -14,5 +14,9 @@ public interface GenericDataInterface extends  Serializable, CsvWriter,Comparabl
 	public abstract long getSampleDateInMillis();
 
 	public abstract int compareTo(Object arg0);
+	
+	public String getSensorDescription();
+	
+	public String getSensorId();
 
 }

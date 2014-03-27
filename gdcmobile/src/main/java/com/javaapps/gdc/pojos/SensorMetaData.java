@@ -38,6 +38,10 @@ public class SensorMetaData implements Serializable {
 			int aggregationPeriod, String active, double conversionFactor,
 			String serviceString) {
 		this.id = id;
+		//TODO remove!!
+		if ( dataType.equals("GENERIC")){
+			dataType="BLUETOOTH_DATA";
+		}
 		this.dataType = DataType.valueOf(dataType);
 		this.dataSubType = dataSubType;
 		this.samplingPeriod = samplingPeriod;

@@ -35,8 +35,6 @@ public class BluetoothProbe extends Probe {
 
 	public static final String BLUE_TOOTH_META_DATA = "bluetoothMetaData";
 	
-	private BluetoothBufferAdapter bluetoothBufferAdapter =new BluetoothBufferAdapter ();
-
 	private BluetoothDevice bluetoothDevice;
 
 	private Context context;
@@ -120,9 +118,12 @@ public class BluetoothProbe extends Probe {
 		private final String sensorMetaDataFile;
 
 		private CharacteristicStateMachine characteristicStateMachine;
+		
+		private BluetoothBufferAdapter bluetoothBufferAdapter ; 
 
 		private GattCallback(String sensorMetaDataFile) {
 			this.sensorMetaDataFile = sensorMetaDataFile;
+			bluetoothBufferAdapter=new BluetoothBufferAdapter(BluetoothProbe.this.sensorMetaData,sensorMetaDataFile);
 		}
 
 		private void enable(BlueToothLECharacteristic blueToothCharacteristic,
@@ -218,7 +219,7 @@ public class BluetoothProbe extends Probe {
 			Log.i(Constants.GENERIC_COLLECTOR_TAG2, "Characteristic onChanged "
 					+ this.metaDataFacade.getLabel(characteristic.getUuid().toString())
 					+ " Value is " + new String(data));
-			BluetoothProbe.this.bluetoothBufferAdapter.addDataPoint(sensorMetaDataFile, serviceName, System.currentTimeMillis(), data);
+			bluetoothBufferAdapter.getBluetoothDataBuffer(serviceName).addDataPoint(System.currentTimeMillis(), data);
 		}
 
 		private void activateNextCharacteristic(BluetoothGatt gatt)
@@ -237,11 +238,11 @@ public class BluetoothProbe extends Probe {
 		public void onServicesDiscovered(BluetoothGatt gatt, int status) {
 			BlueToothLEMetaData blueToothLEMetaData = BlueToothLEMetaDataRetriever
 					.getBlueToothLEMetaData(sensorMetaDataFile);
-			Log.i(Constants.GENERIC_COLLECTOR_TAG2,"Services discovered");
+			Log.i(Constants.GENERIC_COLLECTOR_TAG3,"Services discovered");
 			if ( sensorMetaData.getServiceList() == null || sensorMetaData.getServiceList().size() != blueToothLEMetaData.getServiceMetaDataMap().size()){
 			    try
 			    {
-				Log.i(Constants.GENERIC_COLLECTOR_TAG2,"No services in meta data, rerouting to sensor activity.  SensorMetaData size "
+				Log.i(Constants.GENERIC_COLLECTOR_TAG3,"No services in meta data, rerouting to sensor activity.  SensorMetaData size "
 			    +sensorMetaData.getServiceList().size()+" meta data size is "+blueToothLEMetaData.getServiceMetaDataMap().size());
 				Context context=BluetoothProbe.this.context;
 				Intent intent = new Intent(context, SensorConfigurationActivity.class);
@@ -250,13 +251,13 @@ public class BluetoothProbe extends Probe {
 				intent.putExtra(SensorConfigurationActivity.SENSOR_META_DATA_KEY,
 						sensorMetaData);
 				context.startActivity(intent);
-				Log.i(Constants.GENERIC_COLLECTOR_TAG2,"intent sent to sensor activity");
+				Log.i(Constants.GENERIC_COLLECTOR_TAG3,"intent sent to sensor activity");
 			    }catch(Exception ex){
-			    	Log.e(Constants.GENERIC_COLLECTOR_TAG2,"Unable to send intent to sensor activity because "+ex.getMessage(),ex);
+			    	Log.e(Constants.GENERIC_COLLECTOR_TAG3,"Unable to send intent to sensor activity because "+ex.getMessage(),ex);
 			    }
 				return;
 			}
-			Log.i(Constants.GENERIC_COLLECTOR_TAG2,
+			Log.i(Constants.GENERIC_COLLECTOR_TAG3,
 					"retrieved blueToothCharacteristicMetaData "
 							+ blueToothLEMetaData);
 			metaDataFacade = new BlueToothLEMetaDataFacade(blueToothLEMetaData);
@@ -273,6 +274,11 @@ public class BluetoothProbe extends Probe {
 					+ " Value is " + new String(characteristic.getValue()));
 			Duple duple = metaDataFacade.getDuple(characteristic.getUuid().toString());
 			BlueToothLECharacteristic blueToothCharacteristic = characteristicStateMachine.current();
+			if (blueToothCharacteristic.isCalibration()){
+				String labelKey=characteristic.getUuid().toString();
+				String serviceName= metaDataFacade.getServiceName(labelKey);
+				bluetoothBufferAdapter.getBluetoothDataBuffer(serviceName).setCalibration(characteristic.getValue());
+			}
 			setNotify(gatt, duple);
 		}
 

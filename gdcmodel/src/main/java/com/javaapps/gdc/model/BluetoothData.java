@@ -3,16 +3,22 @@ package com.javaapps.gdc.model;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class BluetoothData extends GenericData {
 
 	private String serviceName;
 	private byte data[];
 	private byte calibration[];
 	private String sensorType;
+	@JsonIgnore
+	private String sensorId;
+	@JsonIgnore
+	private String sensorDescription;
 
-	public BluetoothData(String sensorType,String serviceName, long sampleDateInMillis,
-			byte[] data, byte calibration[]) {
-		this.sensorType=sensorType;
+	public BluetoothData(String sensorType, String serviceName,
+			long sampleDateInMillis, byte[] data, byte calibration[]) {
+		this.sensorType = sensorType;
 		this.setSampleDateInMillis(sampleDateInMillis);
 		this.serviceName = serviceName;
 		this.data = data;
@@ -56,17 +62,57 @@ public class BluetoothData extends GenericData {
 
 	@Override
 	public String toCSV() {
-		return sampleDate.getTime() + "," + data + "," + calibration + "\n";
+		return sampleDate.getTime() + "," + adjustByteData(data) + ","
+				+ adjustByteData(calibration) + "\n";
 	}
 
-	
-	
+	private String adjustByteData(byte[] bytes) {
+		if (bytes == null) {
+			return " ";
+		}
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		boolean allZeros = true;
+		for (byte bt : bytes) {
+			if (allZeros && bt != 0) {
+				allZeros = false;
+			}
+			if (!first) {
+				sb.append("|");
+			}
+			sb.append(String.valueOf(bt));
+			first = false;
+		}
+		if (allZeros) {
+			return "0";
+		} else {
+			return sb.toString();
+		} 
+	}
+
 	public String getSensorType() {
 		return sensorType;
 	}
 
 	public void setSensorType(String sensorType) {
 		this.sensorType = sensorType;
+	}
+
+		
+	public String getSensorId() {
+		return sensorId;
+	}
+
+	public void setSensorId(String sensorId) {
+		this.sensorId = sensorId;
+	}
+
+	public String getSensorDescription() {
+		return sensorDescription;
+	}
+
+	public void setSensorDescription(String sensorDescription) {
+		this.sensorDescription = sensorDescription;
 	}
 
 	@Override
@@ -77,5 +123,4 @@ public class BluetoothData extends GenericData {
 				+ "]";
 	}
 
-	
 }

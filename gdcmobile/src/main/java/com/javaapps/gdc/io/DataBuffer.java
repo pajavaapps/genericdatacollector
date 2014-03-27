@@ -71,6 +71,22 @@ public class DataBuffer {
 		}
 	}
 
+	
+	public void logData(List<GenericData> genericDataList) {
+		long currentTime = System.currentTimeMillis();
+		dataList.addAll(genericDataList);
+		SystemMonitor.getInstance().getMonitor(sensorMetaData.getId())
+				.incrementTotalPointsLogged(1);
+		SystemMonitor.getInstance().getMonitor(sensorMetaData.getId())
+				.setPointsInBuffer(dataList.size());
+		dataFile.updateTimeStamp();
+		Log.d(Constants.GENERIC_COLLECTOR_TAG,"logging data list buffer size "+genericDataList.size());
+		if (dataList.size() > 10) {//TODO setup config
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,"flushing buffer for "+sensorMetaData);
+			flushBuffer();
+		}
+	}
+	
 	public void logData(GenericData genericData) {
 		genericData=aggregator.getAggregatedValue(genericData);
 		if ( genericData == null){

@@ -59,6 +59,15 @@ public abstract class GenericData implements GenericDataInterface {
 		return ((int)(getSampleDateInMillis()-genericData.getSampleDateInMillis()));
 	}
 
-
+   @Override
+   public String getSensorId()
+   {
+	   return null;
+   }
+   
+   @Override
+   public String getSensorDescription(){
+	   return null;
+   }
 
 }

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -47,7 +48,7 @@ public class DataUploader {
 
 	private File filesDir;
 
-	private static final String UPLOAD_DATA_CONTEXT_PATH ="/backend/uploadGenericData";
+	private static final String UPLOAD_DATA_CONTEXT_PATH = "/backend/uploadGenericData";
 
 	public DataUploader() {
 		this.filesDir = Config.getInstance().getFilesDir();
@@ -58,20 +59,25 @@ public class DataUploader {
 	}
 
 	public void uploadData() {
-		if (!WifiConnectionTester.testConnection())
-		{
-			Log.i(Constants.GENERIC_COLLECTOR_TAG,"Cannot get wifi connection at endpoint "+Config.getInstance().getDataEndpoint()+".  Skipping upload");
-			SystemMonitor.getInstance().setLastUploadStatusCode(Constants.COULD_NOT_GET_WIFI_CONNECTION);
+		if (!WifiConnectionTester.testConnection()) {
+			Log.i(Constants.GENERIC_COLLECTOR_TAG,
+					"Cannot get wifi connection at endpoint "
+							+ Config.getInstance().getDataEndpoint()
+							+ ".  Skipping upload");
+			SystemMonitor.getInstance().setLastUploadStatusCode(
+					Constants.COULD_NOT_GET_WIFI_CONNECTION);
 			return;
 		}
-		Log.i(Constants.GENERIC_COLLECTOR_TAG,"Got wifi connection.  Beginning data upload from directory "+this.filesDir.getAbsolutePath());
+		Log.i(Constants.GENERIC_COLLECTOR_TAG,
+				"Got wifi connection.  Beginning data upload from directory "
+						+ this.filesDir.getAbsolutePath());
 		for (File file : this.filesDir.listFiles()) {
 			if (file.getName().contains(DataFile.ARCHIVE_STRING)) {
 				loadFile(file);
 			}
 		}
 	}
-	
+
 	private FileResultMap getResultMap(File file) throws FileNotFoundException,
 			IOException, ClassNotFoundException {
 		String fileName = file.getAbsolutePath();
@@ -113,12 +119,17 @@ public class DataUploader {
 
 	@SuppressWarnings("deprecation")
 	private void loadFile(File file) {
-		DataType dataType=getDataTypeFromFileName(file.getName());
-		if ( dataType == null){
-			Log.e(Constants.GENERIC_COLLECTOR_TAG,"Unable to load "+file.getName()+" because it is not a recognized data type");
+		DataType dataType = getDataTypeFromFileName(file.getName());
+		String sensorId = getSensorIdFromFileName(file.getName());
+		if (dataType == null) {
+			Log.e(Constants.GENERIC_COLLECTOR_TAG,
+					"Unable to load " + file.getName()
+							+ " because it is not a recognized data type");
 			return;
 		}
-		Log.i(Constants.GENERIC_COLLECTOR_TAG,"uploading file "+file.getAbsolutePath()+" with data type "+dataType);
+		Log.i(Constants.GENERIC_COLLECTOR_TAG,
+				"uploading file " + file.getAbsolutePath() + " with data type "
+						+ dataType);
 		DataInputStream inputStream = null;
 		try {
 			FileResultMap fileResultMap = getResultMap(file);
@@ -128,14 +139,15 @@ public class DataUploader {
 			try {
 				String csvLine = null;
 				while ((csvLine = inputStream.readLine()) != null) {
-					GenericData dataPoint =  GenericDataFactory.createGenericData(dataType,csvLine);
-					if (dataPoint.getSampleDate() == null){
+					GenericData dataPoint = GenericDataFactory
+							.createGenericData(dataType, csvLine);
+					if (dataPoint.getSampleDate() == null) {
 						continue;
 					}
 					dataList.add(dataPoint);
 					if (dataList.size() > Config.getInstance()
 							.getUploadBatchSize()) {
-						uploadBatch(dataType,fileResultMap, index, dataList);
+						uploadBatch(dataType, fileResultMap, index, dataList);
 						index++;
 						dataList = new ArrayList<GenericData>();
 					}
@@ -143,23 +155,36 @@ public class DataUploader {
 			} catch (EOFException ex) {
 			}
 			if (dataList.size() > 0) {
-				uploadBatch(dataType,fileResultMap, index, dataList);
+				uploadBatch(dataType, fileResultMap, index, dataList);
 			}
 		} catch (Throwable ex) {
 			SystemMonitor.getInstance().setLastUploadStatusCode(
 					Constants.SERIALIZATION_ERROR);
 			Log.e(Constants.GENERIC_COLLECTOR_TAG,
-					"unable to open location data file "+file.getAbsolutePath()+" and data type "+dataType+"because "
-							+DataCollectorUtils.getStackTrackElement(ex),ex);
+					"unable to open location data file "
+							+ file.getAbsolutePath() + " and data type "
+							+ dataType + "because "
+							+ DataCollectorUtils.getStackTrackElement(ex), ex);
 		} finally {
 			closeInputStream(inputStream);
 		}
 
 	}
 
+	private String getSensorIdFromFileName(String name) {
+		String retValue = null;
+		if (name != null) {
+			String fileParts[] = name.split("_");
+			if (fileParts.length > 1) {
+				retValue = fileParts[1];
+			}
+		}
+		return retValue;
+	}
+
 	private DataType getDataTypeFromFileName(String name) {
-		for ( DataType dataType:DataType.values()){
-			if ( name.contains(dataType.getPrefix())){
+		for (DataType dataType : DataType.values()) {
+			if (name.contains(dataType.getPrefix())) {
 				return dataType;
 			}
 		}
@@ -174,25 +199,25 @@ public class DataUploader {
 		} catch (Exception ex) {
 			Log.e(Constants.GENERIC_COLLECTOR_TAG,
 					"Could not close archive input stream because "
-							+DataCollectorUtils.getStackTrackElement(ex));
+							+ DataCollectorUtils.getStackTrackElement(ex));
 		}
 	}
 
-	public boolean uploadBatch(DataType dataType,FileResultMap fileResultMap, int index,
-			List<GenericData> dataList) {
+	public boolean uploadBatch(DataType dataType, FileResultMap fileResultMap,
+			int index, List<GenericData> dataList) {
 		if (dataList.size() == 0) {
 			return true;
 		}
 		boolean retValue = true;
 		// upload timestamp will be the first date in the list
-		Config config=Config.getInstance();
-		GenericDataUpload dataUpload = new GenericDataUpload(dataType,config.getDeviceId(),
-				dataList.get(0).getSampleDate(), dataList);
+		Config config = Config.getInstance();
+		GenericDataUpload dataUpload = new GenericDataUpload(dataType,
+				config.getDeviceId(), dataList.get(0).getSampleDate(), dataList);
 		dataUpload.setVersion(config.getVersion());
 		dataUpload.setCustomIdentifier(config.getCustomIdentifier());
 		try {
 			SystemMonitor.getInstance().setLastUploadDate(new Date());
-			ObjectMapper objectMapper=new ObjectMapper();
+			ObjectMapper objectMapper = new ObjectMapper();
 			String jsonStr = objectMapper.writeValueAsString(dataUpload);
 			DataUploadTask dataUploadTask = new DataUploadTask(dataType,
 					dataList.size(), fileResultMap, index, jsonStr);
@@ -201,32 +226,32 @@ public class DataUploader {
 		} catch (Throwable e) {
 			Log.e(Constants.GENERIC_COLLECTOR_TAG,
 					"cannot convert upload data to server because because"
-							+DataCollectorUtils.getStackTrackElement(e));
+							+ DataCollectorUtils.getStackTrackElement(e));
 		}
 		return retValue;
 	}
 
-	private class DataUploadTask  {
+	private class DataUploadTask {
 		private int index;
 		private String jsonStr;
 		private FileResultMap fileResultMap;
 		private int batchSize = 0;
 		private DataType dataType;
 
-		public DataUploadTask(DataType dataType,int batchSize, FileResultMap fileResultMap,
-				int index, String jsonStr) {
-			this.dataType=dataType;
+		public DataUploadTask(DataType dataType, int batchSize,
+				FileResultMap fileResultMap, int index, String jsonStr) {
+			this.dataType = dataType;
 			this.index = index;
 			this.batchSize = batchSize;
 			this.jsonStr = jsonStr;
 			this.fileResultMap = fileResultMap;
 		}
 
-		private String getUploadDataEndpoint()
-		{
-			return Config.getInstance().getDataEndpoint()+UPLOAD_DATA_CONTEXT_PATH;
+		private String getUploadDataEndpoint() {
+			return Config.getInstance().getDataEndpoint()
+					+ UPLOAD_DATA_CONTEXT_PATH;
 		}
-		
+
 		public void run() {
 			HttpClient httpClient = httpClientFactory.getHttpClient();
 			if (httpClient != null) {
@@ -235,8 +260,11 @@ public class DataUploader {
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
 							2);
 					nameValuePairs.add(new BasicNameValuePair("data", jsonStr));
-					nameValuePairs.add(new BasicNameValuePair("dataType", dataType.name()));
-					nameValuePairs.add(new BasicNameValuePair("normalizedEmail", Config.getInstance().getNormalizedEmail()));
+					nameValuePairs.add(new BasicNameValuePair("dataType",
+							dataType.name()));
+					nameValuePairs.add(new BasicNameValuePair(
+							"normalizedEmail", Config.getInstance()
+									.getNormalizedEmail()));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					HttpResponse response = httpClient.execute(httppost);
 					int statusCode = response.getStatusLine().getStatusCode();
@@ -250,15 +278,17 @@ public class DataUploader {
 												+ file.getAbsolutePath());
 							}
 						}
-					} 
-					SystemMonitor.getInstance().setLastUploadStatusCode(statusCode);
+					}
+					SystemMonitor.getInstance().setLastUploadStatusCode(
+							statusCode);
 				} catch (Throwable e) {
 					SystemMonitor.getInstance().setLastUploadStatusCode(-99);
-					SystemMonitor.getInstance()
-							.setLastConnectionError(e.getMessage());
+					SystemMonitor.getInstance().setLastConnectionError(
+							e.getMessage());
 					Log.e(Constants.GENERIC_COLLECTOR_TAG,
 							"cannot  upload data to server because because"
-									+DataCollectorUtils.getStackTrackElement(e));
+									+ DataCollectorUtils
+											.getStackTrackElement(e));
 				}
 			} else {
 				Log.i(Constants.GENERIC_COLLECTOR_TAG,
