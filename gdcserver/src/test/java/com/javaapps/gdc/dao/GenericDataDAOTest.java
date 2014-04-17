@@ -147,7 +147,7 @@ public class GenericDataDAOTest {
 					bearing,  altitude,  sampleDateTime);
 			genericDataList.add(gps);
 		}
-		return new GenericDataUpload(DataType.GPS,TEST_DEVICE_ID,new Date(),genericDataList);
+		return new GenericDataUpload(DataType.GPS,TEST_DEVICE_ID,null,null,new Date(),genericDataList);
 	}
 	
 }

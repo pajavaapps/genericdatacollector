@@ -115,25 +115,14 @@ public class DataFile<T> {
 
 	private String getActiveFileName() {
 		
-		return sensorMetaData.getDataType().getPrefix()+"_"+ getNormalizedSensorId(sensorMetaData)+ "." + extension;
+		return sensorMetaData.getDataType().getPrefix()+"_"+ sensorMetaData.getNormalizedSensorId()+ "." + extension;
 	}
 	
-	private String getNormalizedSensorId(SensorMetaData sensorMetaData)
-	{
-		StringBuilder sb=new StringBuilder();
-		String sensorId=sensorMetaData.getId();
-		for (int  ii=0;ii<sensorId.length();ii++){
-			char ch=sensorId.charAt(ii);
-			if ( Character.isLetterOrDigit(ch)){
-				sb.append(ch);
-			}
-		}
-		return sb.toString().trim();
-	}
+	
 
 	private String getArchiveFileName() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-		return sensorMetaData.getDataType().getPrefix()+"_"+ getNormalizedSensorId(sensorMetaData) + ARCHIVE_STRING + dateFormat.format(new Date()) + "."
+		return sensorMetaData.getDataType().getPrefix()+"_"+ sensorMetaData.getNormalizedSensorId() + ARCHIVE_STRING + dateFormat.format(new Date()) + "."
 				+ extension;
 	}
 

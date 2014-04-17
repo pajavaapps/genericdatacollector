@@ -3,13 +3,13 @@
 	};
 	SensorMetaData.prototype = {
 		addService : function(service) {
-			this.serviceMetaDataMap[service.serviceName] = service;
+			this.serviceMetaDataMap[service.serviceUUID] = service;
 		},
-		deleteService : function(serviceName) {
-			delete this.serviceMetaDataMap[serviceName];
+		deleteService : function(serviceUUID) {
+			delete this.serviceMetaDataMap[serviceUUID];
 		},
-		getService:function(serviceName){
-			return this.serviceMetaDataMap[serviceName]
+		getService:function(serviceUUID){
+			return this.serviceMetaDataMap[serviceUUID]
 		},
 		loadSensorMetaData:function(sensorObject){
 			 for(var key in sensorObject.serviceMetaDataMap)
@@ -44,7 +44,7 @@
 	};
 	BluetoothService.prototype = {
 		addCharacteristic : function(characteristic) {
-			this.characteristicMap[characteristic.characteristicName] = characteristic;
+			this.characteristicMap[characteristic.characteristicUUID] = characteristic;
 		},
 		deleteCharacteristic:function(characteristicName){
 			delete this.characteristicMap[characteristicName];
@@ -102,22 +102,22 @@
 
 	var sensorMetaData = new SensorMetaData();
  
-	function deleteCharacteristic(serviceName,characteristicName)
+	function deleteCharacteristic(serviceUUID,characteristicUUID)
 	{
 		var serviceForm=document.getElementById("serviceForm");
-		var service=sensorMetaData.getService(serviceName);
-		service.deleteCharacteristic(characteristicName);
+		var service=sensorMetaData.getService(serviceUUID);
+		service.deleteCharacteristic(characteristicUUID);
 		sensorMetaData.display(serviceForm.serviceName.value,$("#serviceMap"));
 
 	}
 	
-	function editCharacteristic(serviceName,characteristicName)
+	function editCharacteristic(serviceUUID,characteristicUUID)
 	{
 		editService(serviceName);
 		var charForm=document.getElementById("charForm");
-		var service=sensorMetaData.getService(serviceName);
-		var characteristic=service.getCharacteristic(characteristicName);
-        charForm.characteristicName.value=characteristic.characteristicName;
+		var service=sensorMetaData.getService(serviceUUID);
+		var characteristic=service.getCharacteristic(characteristicUUID);
+        charForm.characteristicName.value=characteristic.characteristicUUID;
         charForm.characteristicUUID.value=characteristic.characteristicUUID;
         charForm.enableCharacteristicUUID.value=characteristic.enableCharacteristicUUID;
         charForm.enableValue.value=characteristic.enableCharacteristicValue;
@@ -125,25 +125,25 @@
 	}
 
 	
-	function editService(serviceName)
+	function editService(serviceUUID)
 	{
-		var service=sensorMetaData.getService(serviceName);
+		var service=sensorMetaData.getService(serviceUUID);
 		var serviceForm=document.getElementById("serviceForm");
 		serviceForm.serviceName.value=service.serviceName;
 		serviceForm.serviceUUID.value=service.serviceUUID;
 	}
 	
-	function deleteService(serviceName)
+	function deleteService(serviceUUID)
 	{
 		var serviceForm=document.getElementById("serviceForm");
-		sensorMetaData.deleteService(serviceName);
+		sensorMetaData.deleteService(serviceUUID);
 		sensorMetaData.display(serviceForm.serviceName.value,$("#serviceMap"));
 	}
 
-	function loadSensorData(sensorDataForm)
+	function loadSensorData(contextPath,sensorDataForm)
 	{
 		 request = $.ajax({
-		        url: '<c:url value="/backend/getBlueToothMetaData"/>?sensorKey='+sensorDataForm.sensorName.value,
+		        url: contextPath+'?sensorKey='+sensorDataForm.sensorName.value,
 		        type: "get",
 		        async:false
 		    }).done(function( msg ) {
@@ -152,13 +152,13 @@
 		 sensorMetaData.display(sensorDataForm.sensorName.value,$("#serviceMap"));
 	}
 	
-	function saveSensorMetaData()
+	function saveSensorMetaData(contextPath)
 	{
 		var sensorForm=document.getElementById("sensorForm");
 		var data="sensorName="+sensorForm.sensorName.value+"&data="+JSON.stringify(sensorMetaData)
 		//alert (data)
 		request = $.ajax({
-		        url: '<c:url value="/backend/saveBlueToothMetaData"/>',
+		        url: contextPath+'/saveBlueToothMetaData',
 		        type: "post",
 		        data: data,
 		        async:false
@@ -173,7 +173,7 @@
 		var service =sensorMetaData.getService(serviceName);
 		if (service == null) {
 			var service = new BluetoothService(serviceName, serviceUUID);
-			sensorMetaData.addService(service)
+			sensorMetaData.addService(serviceUUID)
 		}else{
 			service.serviceUUID=serviceUUID;
 		}
@@ -193,7 +193,7 @@
 		service = addService(serviceForm);
 		var characteristic = new BluetoothCharacteristic(characteristicName,
 					characteristicUUID,enableCharacteristicUUID,enableValue,disableValue,calibration,calibration);
-		service.addCharacteristic(characteristic);
+		service.addCharacteristic(characteristicUUID);
 		var sensorName=sensorForm.sensorName.value;
 		sensorMetaData.display(	sensorName,$("#serviceMap"));
 	}

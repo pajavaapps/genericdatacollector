@@ -164,14 +164,12 @@ public class SensorConfigurationActivity extends Activity {
 				dbAdapter.updateSensorMetaData(sensorMetaData);
 				SensorMetaData sensorMetaData = dbAdapter
 						.getSensorMetaData(this.sensorMetaData.getId());
-				Log.i(Constants.GENERIC_COLLECTOR_TAG2,
-						"Saved sensor meta data" + this.sensorMetaData);
-				DataCollectorReceiver.removeProbe(sensorMetaData.getId());
+				DataCollectorReceiver.updateProbe(SensorConfigurationActivity.this,sensorMetaData.getId());
 				Intent intent = new Intent(SensorConfigurationActivity.this,
 						GenericCollectorActivity.class);
 				startActivity(intent);
 			} catch (Exception ex) {
-				Log.e(Constants.GENERIC_COLLECTOR_TAG2,
+				Log.e(Constants.GENERIC_COLLECTOR_TAG3,
 						"Could not save sensor meta data because "
 								+ ex.getMessage(), ex);
 				Toast.makeText(

@@ -103,9 +103,9 @@ public class DBAdapterTest extends AndroidTestCase {
 		assertTrue(dbAdapter.insertSensorMetaData(sensorMetaData1) != -1);
 		sensorMetaData1= dbAdapter.getSensorMetaData("id2");
 		System.out.println(sensorMetaData1);
-		assertEquals(500, sensorMetaData1.getSamplingPeriod());
+		assertEquals(5000, sensorMetaData1.getSamplingPeriod());
 		assertEquals(1.0, sensorMetaData1.getConversionFactor());
-		assertEquals(1000, sensorMetaData1.getAggregationPeriod());
+		assertEquals(5000, sensorMetaData1.getAggregationPeriod());
 		assertTrue(AggregationType.SIMPLE == sensorMetaData1.getAggregationType());
 		 dbAdapter.delete(sensorMetaData1);
 		 assertNull( dbAdapter.getSensorMetaData("id2"));

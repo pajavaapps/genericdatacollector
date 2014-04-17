@@ -3,6 +3,7 @@ package com.javaapps.gdc.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonSubTypes.Type;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
@@ -59,12 +60,14 @@ public abstract class GenericData implements GenericDataInterface {
 		return ((int)(getSampleDateInMillis()-genericData.getSampleDateInMillis()));
 	}
 
+@JsonIgnore
    @Override
    public String getSensorId()
    {
 	   return null;
    }
    
+@JsonIgnore
    @Override
    public String getSensorDescription(){
 	   return null;

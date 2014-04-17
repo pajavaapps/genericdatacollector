@@ -1,9 +1,1 @@
-{"serviceMetaDataMap":
-{"service1":{"serviceName":"service1","serviceUUID":"00000000-0000-0000-0000-000000001234",
-"characteristicMap":{"char1":
-{"characteristicName":
-"char1","characteristicUUID":"00000000-0000-0000-0000-000000012345","enableCharacteristicUUID":"00000000-0000-0000-0000-000000012346","enableCharacteristicValue":1,"disableCharacteristicValue":2},
-"char2":{"characteristicName":"char2","characteristicUUID":"00000000-0000-0000-0000-000000022345","enableCharacteristicUUID":"00000000-0000-0000-0000-000000022346","enableCharacteristicValue":3,"disableCharacteristicValue":4}}},
-"service2":{"serviceName":"service2","serviceUUID":"00000000-0000-0000-0000-000000002234",
-"characteristicMap":{"char1":
-{"characteristicName":"char1","characteristicUUID":"00000000-0000-0000-0000-000000032345","enableCharacteristicUUID":"00000000-0000-0000-0000-000000033346","enableCharacteristicValue":5,"disableCharacteristicValue":6}}}}}
+{"serviceMetaDataMap":{"Humidity":{"serviceName":"Humidity","serviceUUID":"f000aa20-0451-4000-b000-000000000000","characteristicMap":{"f000aa21-0451-4000-b000-000000000000":{"characteristicName":"Humidity","characteristicUUID":"f000aa21-0451-4000-b000-000000000000","enableCharacteristicUUID":"f000aa22-0451-4000-b000-000000000000","enableCharacteristicValue":1,"disableCharacteristicValue":0,"calibration":false}}},"Barometer":{"serviceName":"Barometer","serviceUUID":"f000aa40-0451-4000-b000-000000000000","characteristicMap":{"f000aa41-0451-4000-b000-000000000000":{"characteristicName":"Barometer","characteristicUUID":"f000aa41-0451-4000-b000-000000000000","enableCharacteristicUUID":"f000aa42-0451-4000-b000-000000000000","enableCharacteristicValue":1,"disableCharacteristicValue":0,"calibration":false},"f000aa43-0453-4000-b000-000000000000":{"characteristicName":"Barometer Calibration","characteristicUUID":"f000aa43-0453-4000-b000-000000000000","enableCharacteristicUUID":"f000aa42-0451-4000-b000-000000000000","enableCharacteristicValue":"3","disableCharacteristicValue":"0","calibration":true}}}}}

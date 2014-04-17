@@ -27,11 +27,11 @@
 </head>
 <body syle="margin:40px">
 	<div id="serviceMap" style="margin:40px">Sensor Services </div>
-	<div><input type="button" value="Save Sensor Meta Data"  onclick="saveSensorMetaData()"/></div>
+	<div><input type="button" value="Save Sensor Meta Data"  onclick="saveSensorMetaData('<c:url value="/backend"/>')"/></div>
 	<div
 		style="border: 2px solid green; margin: 10px; padding: 10px 10px; width: 80%">
 		<form id="sensorForm" onclick="return false;">
-			Sensor Name: <input type="text" name="sensorName" length="50"  value="SensorTag"/>&nbsp;&nbsp;&nbsp;<input type="button"  value="Load Sensor Data" onclick="loadSensorData(this.form)"/>
+			Sensor Name: <input type="text" name="sensorName" length="50"  value="SensorTag"/>&nbsp;&nbsp;&nbsp;<input type="button"  value="Load Sensor Data" onclick="loadSensorData('<c:url value="/backend/getBlueToothMetaData"/>',this.form)"/>
 		</form>
 		<div
 			style="border: 2px solid red; margin: 10px; padding: 10px 10px; width: 70%">

@@ -59,7 +59,7 @@ public class BlueToothLEService implements Serializable{
 			BlueToothLECharacteristic characteristicMetaData = new BlueToothLECharacteristic(
 					characteristicName, UUID.fromString(characteristicUUIDStr),UUID.fromString( enableCharacteristicUUIDStr),
 					enableCharacteristicValue,disableCharacteristicValue,calibration);
-			characteristicMap.put(characteristicName, characteristicMetaData);
+			characteristicMap.put(characteristicUUIDStr, characteristicMetaData);
 		}
 
 		public BlueToothLEService build() {

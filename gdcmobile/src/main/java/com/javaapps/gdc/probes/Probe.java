@@ -16,4 +16,8 @@ public abstract class Probe {
 	
 	abstract public void stopCollectingData(Context context);
 
+	public void setSensorMetaData(SensorMetaData sensorMetaData) {
+		this.sensorMetaData = sensorMetaData;
+	}	
+
 }

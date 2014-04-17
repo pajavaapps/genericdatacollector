@@ -26,8 +26,28 @@ public class DataCollectorReceiver extends BroadcastReceiver {
 
 	private static Map<String, Probe> probeMap = new HashMap<String, Probe>();
 	
-	public static void removeProbe(String sensorMetaDataId){
-		probeMap.remove(sensorMetaDataId);
+	public static void updateProbe(Context context,String sensorMetaDataId){
+		DBAdapter dbAdapter = new DBAdapter(context);
+		dbAdapter.open();
+		Probe probe=probeMap.get(sensorMetaDataId);
+		try
+		{
+		SensorMetaData sensorMetaData=dbAdapter.getSensorMetaData( sensorMetaDataId);	
+		if ( probe != null)
+		{
+		probe.setSensorMetaData(sensorMetaData);
+		}else{
+			Log.e(Constants.GENERIC_COLLECTOR_TAG4, "Unable to set sensor metadata for probe  "+sensorMetaDataId
+					+ "because metadata was not found in db");
+		}
+		}catch(Exception ex)
+		{
+			Log.e(Constants.GENERIC_COLLECTOR_TAG4, "Unable to set sensor metadata for probe  "+sensorMetaDataId
+					+ "because "+ex.getMessage(),ex);
+
+		}finally{
+			dbAdapter.close();
+		}
 	}
 	
 	public void collectData(Context context) {
@@ -55,6 +75,8 @@ public class DataCollectorReceiver extends BroadcastReceiver {
 		Probe probe = probeMap.get(sensorMetaData.getId());
 		if (probe == null) {
 			probe = new GPSProbe(sensorMetaData);
+			Log.i(Constants.GENERIC_COLLECTOR_TAG3,
+					"Creating probe with sensor metaData" + sensorMetaData);
 			probeMap.put(sensorMetaData.getId(), probe);
 		}
 		if (sensorMetaData.getActive().equalsIgnoreCase("Y")) {

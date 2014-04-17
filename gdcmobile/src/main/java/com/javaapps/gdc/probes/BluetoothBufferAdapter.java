@@ -18,7 +18,7 @@ import com.javaapps.gdc.model.GenericData;
 import com.javaapps.gdc.pojos.SensorMetaData;
 
 public class BluetoothBufferAdapter {
-	private static final int BLUETOOTH_BUFFER_SIZE = 2;
+	private static final int BLUETOOTH_BUFFER_SIZE = 10;
 	private long lastUpdateTime = System.currentTimeMillis();
 	private static Map<String, BluetoothDataBuffer> bufferMap = new HashMap<String, BluetoothDataBuffer>();
 	private SensorMetaData sensorMetaData;
@@ -28,6 +28,13 @@ public class BluetoothBufferAdapter {
 			String sensorMetaDataFile) {
 		this.sensorMetaData = sensorMetaData;
 		this.sensorMetaDataFile = sensorMetaDataFile;
+	}
+
+	public void setSensorMetaData(SensorMetaData sensorMetaData) {
+		this.sensorMetaData = sensorMetaData;
+		Log.i(Constants.GENERIC_COLLECTOR_TAG4, "sensor meta data changed  "
+				+ sensorMetaData);
+
 	}
 
 	public BluetoothDataBuffer getBluetoothDataBuffer(String serviceName) {
@@ -43,31 +50,35 @@ public class BluetoothBufferAdapter {
 		private DataBuffer dataBuffer;
 		private List<DataPoint> dataList = new ArrayList<DataPoint>();
 		private byte[] calibration;
-		
-		BluetoothDataBuffer()
-		{
+
+		BluetoothDataBuffer() {
 			try {
-				dataBuffer=DataBuffer.getInstance(sensorMetaData);
+				dataBuffer = DataBuffer.getInstance(sensorMetaData);
 			} catch (Exception ex) {
-				Log.e(Constants.GENERIC_COLLECTOR_TAG3,"Unable to create bluetooth data buffer because "+ex.getMessage(),ex);
+				Log.e(Constants.GENERIC_COLLECTOR_TAG3,
+						"Unable to create bluetooth data buffer because "
+								+ ex.getMessage(), ex);
 			}
 		}
 
 		void addDataPoint(long sampleDateInMillis, byte[] data) {
 			long now = System.currentTimeMillis();
+			//Log.d(Constants.GENERIC_COLLECTOR_TAG3,"adding data point time "+(now - lastUpdateTime)+" "+sensorMetaData.getSamplingPeriod());
 			if ((now - lastUpdateTime) < sensorMetaData.getSamplingPeriod()) {
 				return;
 			}
-			lastUpdateTime=now;
-		   dataList.add(new DataPoint(sampleDateInMillis, data));
+			lastUpdateTime = now;
+			dataList.add(new DataPoint(sampleDateInMillis, data));
 			if (dataList.size() > BLUETOOTH_BUFFER_SIZE) {
 				List<GenericData> genericDataList = convertToGenericData();
-				if ( dataBuffer != null)
-				{
-				dataBuffer.logData(genericDataList);
-				Log.i(Constants.GENERIC_COLLECTOR_TAG3,"logged bluetooth data "+genericDataList);
-				}else{
-					Log.d(Constants.GENERIC_COLLECTOR_TAG3,"Cannot log bluetooth data "+genericDataList+" because databuffer is null");
+				if (dataBuffer != null) {
+					dataBuffer.logData(genericDataList);
+					Log.i(Constants.GENERIC_COLLECTOR_TAG3,
+							"logged bluetooth data " + genericDataList);
+				} else {
+					Log.d(Constants.GENERIC_COLLECTOR_TAG3,
+							"Cannot log bluetooth data " + genericDataList
+									+ " because databuffer is null");
 				}
 				dataList.clear();
 			}
@@ -82,12 +93,14 @@ public class BluetoothBufferAdapter {
 			for (String serviceName : bufferMap.keySet()) {
 				BluetoothDataBuffer dataBuffer = bufferMap.get(serviceName);
 				for (DataPoint dataPoint : dataBuffer.dataList) {
-					BluetoothData bluetoothData=new BluetoothData(
+					BluetoothData bluetoothData = new BluetoothData(
 							BluetoothBufferAdapter.this.sensorMetaDataFile,
 							serviceName, dataPoint.sampleDateInMillis,
 							dataPoint.data, dataBuffer.calibration);
-					bluetoothData.setSensorDescription(sensorMetaData.getDescription());
-					bluetoothData.setSensorId(sensorMetaData.getId());
+					bluetoothData.setSensorDescription(sensorMetaData
+							.getDescription());
+					bluetoothData.setSensorId(sensorMetaData
+							.getNormalizedSensorId());
 					retList.add(bluetoothData);
 				}
 			}

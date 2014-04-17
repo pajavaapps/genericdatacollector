@@ -41,7 +41,7 @@ public class BlueToothLEMetaData implements Serializable {
 			if (!serviceMetaDataBuilderMap.containsKey(serviceName)) {
 				serviceBuilder = new BlueToothLEService.Builder(serviceName,
 						UUID.fromString(serviceUUIDStr));
-				serviceMetaDataBuilderMap.put(serviceName, serviceBuilder);
+				serviceMetaDataBuilderMap.put(serviceUUIDStr, serviceBuilder);
 			} else {
 				serviceBuilder = serviceMetaDataBuilderMap.get(serviceName);
 			}

@@ -29,12 +29,15 @@ public class GenericDataUpload implements Serializable {
 	
 	private String sensorId;
 	
-
+	private String sensorDescription;
+	
 	public GenericDataUpload() {
 	}
 
-	public GenericDataUpload(DataType dataType,String deviceId,Date uploadDate,
+	public GenericDataUpload(DataType dataType,String sensorId, String sensorDescription,String deviceId,Date uploadDate,
 			List<GenericData> genericDataList) {
+		this.sensorId=sensorId;
+		this.sensorDescription=sensorDescription;
 		this.uploadDate = uploadDate;
 		this.genericDataList= genericDataList;
 		this.deviceId=deviceId;
@@ -100,6 +103,14 @@ public class GenericDataUpload implements Serializable {
 
 	public void setSensorId(String sensorId) {
 		this.sensorId = sensorId;
+	}
+
+	public String getSensorDescription() {
+		return sensorDescription;
+	}
+
+	public void setSensorDescription(String sensorDescription) {
+		this.sensorDescription = sensorDescription;
 	}
 
 	

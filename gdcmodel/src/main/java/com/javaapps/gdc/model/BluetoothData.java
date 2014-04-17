@@ -16,6 +16,13 @@ public class BluetoothData extends GenericData {
 	@JsonIgnore
 	private String sensorDescription;
 
+	private final static int SAMPLE_DATE_IDX = 0;
+	private final static int DATA_IDX = 1;
+	private final static int CALIBRATION_IDX = 2;
+	private final static int SERVICE_NAME_IDX = 3;
+	private final static int SENSOR_ID_IDX = 4;
+	private final static int SENSOR_DESCRIPTION_IDX = 5;
+
 	public BluetoothData(String sensorType, String serviceName,
 			long sampleDateInMillis, byte[] data, byte calibration[]) {
 		this.sensorType = sensorType;
@@ -24,16 +31,30 @@ public class BluetoothData extends GenericData {
 		this.data = data;
 		this.calibration = calibration;
 	}
+	
+	public BluetoothData()
+	{
+		
+	}
 
 	public BluetoothData(String csvString) {
 		String props[] = csvString.split("\\,");
-		if (props.length < 3) {
+		if (props.length < 4) {
 			return;
 		}
 		systemDate = new Date();
 		sampleDate = new Date(Long.parseLong(props[0]));
-		data = props[1].getBytes();
-		calibration = props[2].getBytes();
+		data = props[DATA_IDX].trim().getBytes();
+		calibration = props[CALIBRATION_IDX].trim().getBytes();
+		if (props.length > 3) {
+			this.sensorId = props[SERVICE_NAME_IDX];
+		}
+		if (props.length > 4) {
+			this.sensorId = props[SENSOR_ID_IDX];
+		}
+		if (props.length > 5) {
+			this.sensorDescription = props[SENSOR_DESCRIPTION_IDX];
+		}
 	}
 
 	public String getServiceName() {
@@ -62,8 +83,19 @@ public class BluetoothData extends GenericData {
 
 	@Override
 	public String toCSV() {
-		return sampleDate.getTime() + "," + adjustByteData(data) + ","
-				+ adjustByteData(calibration) + "\n";
+		StringBuilder sb = new StringBuilder(sampleDate.getTime() + ","
+				+ adjustByteData(data) + "," + adjustByteData(calibration));
+		if (serviceName != null) {
+			sb.append("," + serviceName);
+			if (sensorId != null) {
+				sb.append("," + sensorId);
+				if (sensorDescription != null) {
+					sb.append("," + sensorDescription);
+				}
+			}
+		}
+		sb.append("\n");
+		return sb.toString();
 	}
 
 	private String adjustByteData(byte[] bytes) {
@@ -87,7 +119,7 @@ public class BluetoothData extends GenericData {
 			return "0";
 		} else {
 			return sb.toString();
-		} 
+		}
 	}
 
 	public String getSensorType() {
@@ -98,7 +130,6 @@ public class BluetoothData extends GenericData {
 		this.sensorType = sensorType;
 	}
 
-		
 	public String getSensorId() {
 		return sensorId;
 	}

@@ -211,7 +211,8 @@ public class DataUploader {
 		boolean retValue = true;
 		// upload timestamp will be the first date in the list
 		Config config = Config.getInstance();
-		GenericDataUpload dataUpload = new GenericDataUpload(dataType,
+		GenericData firstData=dataList.get(0);
+		GenericDataUpload dataUpload = new GenericDataUpload(dataType,firstData.getSensorId(),firstData.getSensorDescription(),
 				config.getDeviceId(), dataList.get(0).getSampleDate(), dataList);
 		dataUpload.setVersion(config.getVersion());
 		dataUpload.setCustomIdentifier(config.getCustomIdentifier());

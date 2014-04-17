@@ -19,7 +19,7 @@ public class GenericDataUploadTest {
 	    Date now=new Date();
 		GForce gforce = new GForce(1.0f, 2.0f, 3.0f, 10l);
 		gforce.setSystemDate(now);
-		GenericDataUpload genericDataUpload=new GenericDataUpload(DataType.GFORCE, "deviceid", now, new ArrayList<GenericData>());
+		GenericDataUpload genericDataUpload=new GenericDataUpload(DataType.GFORCE, "1","desc","deviceid", now, new ArrayList<GenericData>());
 		genericDataUpload.getGenericDataList().add(gforce);
 		genericDataUpload.setVersion(1);
 		ObjectMapper objectMapper=new ObjectMapper();

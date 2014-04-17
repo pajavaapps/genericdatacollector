@@ -22,8 +22,8 @@ public class SensorMetaData implements Serializable {
 
 	private List<Service> serviceList = new ArrayList<Service>();
 
-	public final static int DEFAULT_SAMPLING_PERIOD = 500;
-	public final static int DEFAULT_AGGREGATION_PERIOD = 1000;
+	public final static int DEFAULT_SAMPLING_PERIOD = 5000;
+	public final static int DEFAULT_AGGREGATION_PERIOD = 5000;
 	public final static AggregationType DEFAULT_AGGREGATION_TYPE = AggregationType.SIMPLE;
 	public final static double DEFAULT_CONVERSION_FACTOR = 1.0;
 
@@ -55,6 +55,22 @@ public class SensorMetaData implements Serializable {
 
 	public String getId() {
 		return id;
+	}
+
+	public String getNormalizedSensorId()
+	{
+		if ( id == null){
+			return null;
+		}
+		StringBuilder sb=new StringBuilder();
+		String sensorId=id;
+		for (int  ii=0;ii<sensorId.length();ii++){
+			char ch=sensorId.charAt(ii);
+			if ( Character.isLetterOrDigit(ch)){
+				sb.append(ch);
+			}
+		}
+		return sb.toString().trim();
 	}
 
 	public void setId(String id) {
@@ -209,6 +225,7 @@ public class SensorMetaData implements Serializable {
 			this.active = active;
 		}
 
+			
 		@Override
 		public String toString() {
 			return "Service [serviceName=" + serviceName + ", serviceUUID="

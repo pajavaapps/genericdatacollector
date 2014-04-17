@@ -54,13 +54,26 @@ public class BlueToothLEMetaDataFacade {
 		}
 	}
 	
-	public BlueToothLECharacteristic getBlueToothLECharacteristic(String serviceName,String characteristicName){
-		BlueToothLEService blueToothLEService=getBlueToothLEService(serviceName);
+	public BlueToothLECharacteristic getBlueToothLECharacteristic(String serviceUUID,String characteristicUUID){
+		BlueToothLEService blueToothLEService=getBlueToothLEService(serviceUUID);
 		if ( blueToothLEService != null ){
-			 return blueToothLEService.getCharacteristicMap().get(characteristicName);
+			 return blueToothLEService.getCharacteristicMap().get(characteristicUUID);
 		}else{
 			return null;
 		}
+	}
+	
+	public BlueToothLECharacteristic getCalibrationBlueToothLECharacteristic(
+			String serviceUUID) {
+		BlueToothLEService blueToothLEService = getBlueToothLEService(serviceUUID);
+		if (blueToothLEService != null) {
+			for (BlueToothLECharacteristic characteristic : blueToothLEService
+					.getCharacteristicMap().values())
+				if (characteristic.isCalibration()) {
+					return characteristic;
+				}
+		}
+		return null;
 	}
 	
 	public Collection<BlueToothLEService> getBlueToothLEService()
