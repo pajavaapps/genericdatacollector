@@ -47,7 +47,7 @@ public class BluetoothData extends GenericData {
 		data = props[DATA_IDX].trim().getBytes();
 		calibration = props[CALIBRATION_IDX].trim().getBytes();
 		if (props.length > 3) {
-			this.sensorId = props[SERVICE_NAME_IDX];
+			this.serviceName= props[SERVICE_NAME_IDX];
 		}
 		if (props.length > 4) {
 			this.sensorId = props[SENSOR_ID_IDX];

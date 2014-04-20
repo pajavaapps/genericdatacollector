@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.javaapps.gdc.types.AggregationType;
 import com.javaapps.gdc.types.DataType;
+import com.javaapps.gdc.utils.DataCollectorUtils;
 
 public class SensorMetaData implements Serializable {
 	private String id;
@@ -59,18 +60,11 @@ public class SensorMetaData implements Serializable {
 
 	public String getNormalizedSensorId()
 	{
-		if ( id == null){
+			if ( id == null){
 			return null;
+		}else{
+			return DataCollectorUtils.getNormalizedString(id);
 		}
-		StringBuilder sb=new StringBuilder();
-		String sensorId=id;
-		for (int  ii=0;ii<sensorId.length();ii++){
-			char ch=sensorId.charAt(ii);
-			if ( Character.isLetterOrDigit(ch)){
-				sb.append(ch);
-			}
-		}
-		return sb.toString().trim();
 	}
 
 	public void setId(String id) {

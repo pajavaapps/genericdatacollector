@@ -51,12 +51,20 @@ public abstract class GenericData implements GenericDataInterface {
 
 	@Override
 	public long getSampleDateInMillis() {
+		if ( sampleDate != null)
+		{
 		return sampleDate.getTime();
+		}else{
+			return 0;
+		}
 	}
 
 	@Override
 	public int compareTo(Object object) {
 		GenericData genericData=(GenericData)object;
+		if ( genericData == null || genericData.getSampleDate() == null){
+			return -1;
+		}
 		return ((int)(getSampleDateInMillis()-genericData.getSampleDateInMillis()));
 	}
 

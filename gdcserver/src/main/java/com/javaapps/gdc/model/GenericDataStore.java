@@ -42,7 +42,7 @@ public class GenericDataStore implements Serializable {
 	private String convertListToBlob(List<GenericData> generidDataList) {
 		StringBuilder sb = new StringBuilder();
 		for (GenericData genericData : generidDataList) {
-			sb.append(genericData.toCSV()+"\n");
+			sb.append(genericData.toCSV());
 		}
 		return sb.toString();
 	}
@@ -52,14 +52,20 @@ public class GenericDataStore implements Serializable {
 		if (dataBlob == null) {
 			return retList;
 		}
-		for (String gpsDataStr : lineFeedPattern.split(this.dataBlob)) {
+		for (String dataStr : lineFeedPattern.split(this.dataBlob)) {
 			try {
+				if ( dataStr.trim().length() == 0)
+				{
+					continue;
+				}
 				GenericData genericData =null;
 	                if ( dataType == DataType.GPS)
 	                { 	
-					genericData = new GPS(gpsDataStr);
+					genericData = new GPS(dataStr);
 	                }else if ( dataType==DataType.GFORCE){
-	                	genericData = new GForce(gpsDataStr);
+	                	genericData = new GForce(dataStr);
+	                }else if ( dataType == DataType.BLUETOOTH_DATA){
+	                	genericData=new PostProcessedBluetoothData(dataStr);
 	                }
 					retList.add(genericData);
 			} catch (Exception ex) {

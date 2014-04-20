@@ -1,5 +1,7 @@
 package com.javaapps.gdc.pojos;
 
+import com.javaapps.gdc.utils.DataCollectorUtils;
+
 public class DeviceMetaData {
 
 	private String email;
@@ -65,7 +67,7 @@ public class DeviceMetaData {
 	public String getNormalizedEmail() {
 		String retStr = "notset";
 		if (email != null) {
-			retStr = email.toLowerCase().replace('@', '_').replace('.', '_');
+			retStr =DataCollectorUtils.getNormalizedString(email);
 		}
 		return retStr;
 	}

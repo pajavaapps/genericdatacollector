@@ -6,7 +6,7 @@ import java.util.List;
 public enum DataType {
 GPS("gps",new String[]{"sampleDate"},new String[]{"speed","altitude"}),
 GFORCE("gforce",new String[]{"sampleDate"},new String[]{"x","y","z","gforce"}),
-BLUETOOTH_DATA("blueTooth",new String[]{"sampleDate"},new String[]{"data"});
+BLUETOOTH_DATA("bluetooth",new String[]{"sampleDate"},new String[]{"data"});
 
 private String prefix;
 

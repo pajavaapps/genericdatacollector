@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.javaapps.gdc.types.DataType;
 
@@ -17,7 +18,7 @@ public class GenericDataUpload implements Serializable {
 
 	private  Date uploadDate;
 
-	private  List<GenericData>genericDataList ;
+	private  List<GenericData>genericDataList =new ArrayList<GenericData>();
 
 	private String deviceId;
 	
@@ -30,6 +31,9 @@ public class GenericDataUpload implements Serializable {
 	private String sensorId;
 	
 	private String sensorDescription;
+	
+	@JsonIgnore
+	private String dailyCollectionName;
 	
 	public GenericDataUpload() {
 	}
@@ -113,5 +117,14 @@ public class GenericDataUpload implements Serializable {
 		this.sensorDescription = sensorDescription;
 	}
 
+	public String getDailyCollectionName() {
+		return dailyCollectionName;
+	}
+
+	public void setDailyCollectionName(String dailyCollectionName) {
+		this.dailyCollectionName = dailyCollectionName;
+	}
+	
+	
 	
 }

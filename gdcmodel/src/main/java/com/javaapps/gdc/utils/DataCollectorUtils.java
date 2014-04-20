@@ -12,4 +12,20 @@ public class DataCollectorUtils {
 		}
 		return sb.toString();
 	}
+	
+	public static String getNormalizedString(String inputStr)
+	{
+		if ( inputStr == null){
+			return null;
+		}
+		StringBuilder sb=new StringBuilder();
+		for (int  ii=0;ii<inputStr.length();ii++){
+			char ch=inputStr.charAt(ii);
+			if ( Character.isLetterOrDigit(ch)){
+				sb.append(ch);
+			}
+		}
+		return sb.toString().trim();
+	}
+
 }
