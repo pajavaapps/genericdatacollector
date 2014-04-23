@@ -27,6 +27,11 @@ public class FileResultMapsWrapper {
 		return fileResultMaps;
 	}
 
+	@Override
+	public String toString() {
+		return "FileResultMapsWrapper [fileResultMaps=" + fileResultMaps + "]";
+	}
+
 
 }
 

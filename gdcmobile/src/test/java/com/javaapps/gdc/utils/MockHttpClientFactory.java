@@ -29,15 +29,17 @@ public class MockHttpClientFactory implements HttpClientFactory {
 		this.reason = reason;
 	}
 
-	private HttpResponse getHttpResponse() {
-		HttpResponse httpResponse = new BasicHttpResponse(protocolVersion,
-				statusCodes[0], reason);
-		return httpResponse;
-	}
+	
 
 	public HttpClient getHttpClient() {
 		return new HttpClient() {
 
+			private HttpResponse getHttpResponse() {
+				HttpResponse httpResponse = new BasicHttpResponse(protocolVersion,
+						statusCodes[0], reason);
+				return httpResponse;
+			}
+			
 			public HttpResponse execute(HttpUriRequest arg0)
 					throws IOException, ClientProtocolException {
 				return getHttpResponse();
